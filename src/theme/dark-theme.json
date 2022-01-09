@@ -1,0 +1,16 @@
+{
+  "color-basic-100": "#34495e",
+  "color-basic-200": "#2c3e50",
+  "color-primary-100": "#95a5a6",
+  "color-primary-200": "#7f8c8d",
+  "color-secondary-100": "#e74c3c",
+  "color-secondary-200": "#c0392b",
+  "color-yellow-100": "#f1c40f",
+  "color-yellow-200": "#f39c12",
+  "color-blue-100": "#3498db",
+  "color-blue-200": "#2980b9",
+  "color-success-100": "#1abc9c",
+  "color-success-200": "#16a085",
+  "color-warning-100": "#e67e22",
+  "color-warning-200": "#d35400"
+}
