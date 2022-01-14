@@ -10,19 +10,19 @@ export const REST_END = {
 	logout: 'logout',
 	userProfile: 'c_user/item',
 	updateUserProfile: 'c_user/edit',
-	simpleRoutes: 'c_route/lite/items',
-	simpleRouteDetails: 'c_route/item',
+	routes: 'c_route/lite/items',
+	routeDetails: 'c_route/item',
 	routeComplete: 'c_route/complete',
-	addSimpleRoute: 'c_route/ios/save',
-	questRoutes: 'c_quest/lite/items',
-	questRouteDetails: 'c_quest/item',
-	questRoutePlay: 'c_quest/play',
-	questRouteExit: 'c_quest/play/current/exit',
-	questRouteSendPosition: 'c_quest/play/current/position',
-	questRouteCurrentPoints: 'c_quest/play/current/points',
-	questRouteCurrentPoint: 'c_quest/play/current/point',
-	questRouteUsers: 'c_quest/play/current/users',
-	questRouteAnswer: 'c_quest/play/current/answer',
+	addRoute: 'c_route/ios/save',
+	quests: 'c_quest/lite/items',
+	questDetails: 'c_quest/item',
+	questPlay: 'c_quest/play',
+	questExit: 'c_quest/play/current/exit',
+	questSendPosition: 'c_quest/play/current/position',
+	questCurrentPoints: 'c_quest/play/current/points',
+	questCurrentPoint: 'c_quest/play/current/point',
+	questUsers: 'c_quest/play/current/users',
+	questAnswer: 'c_quest/play/current/answer',
 
 	sendQuestRating: 'c_quest/setRating', /// ???
 }
@@ -32,7 +32,7 @@ export const EMAIL_PATTERN = /^[\w.]+@[a-zA-Z_]+?(\.[a-zA-Z]{2,})*(\.[a-zA-Z]{2,
 export const KEYS = {
 	AUTH: {
 		VK: {
-			appId: '5538876'
+			appId: 5538876
 		},
 		FACEBOOK: {
 			// appId: '1161945170522401',
