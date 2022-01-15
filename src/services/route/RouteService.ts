@@ -11,7 +11,7 @@ export const routeAPI = createApi({
 	reducerPath: 'routeAPI',
 	baseQuery: fetchBaseQuery({
 		baseUrl: REST_API,
-		prepareHeaders: (async headers => {
+		prepareHeaders: async headers => {
 			const accessToken = await getFromStorage('accessToken')
 			if (accessToken) {
 				headers.set('Authorization', `Bearer ${accessToken}`)
@@ -19,22 +19,24 @@ export const routeAPI = createApi({
 			headers.set('Content-Type', 'application/json')
 
 			return headers
-		})
+		}
 	}),
 	tagTypes: ['Route'],
 	endpoints: (build) => ({
 		fetchRoutes: build.mutation<IRoute[], IFetchRoutesData>({
-			query: ({ page = 1, limit = FETCH_LIMIT }) => ({
-				url: REST_END.routes,
-				method: 'POST',
-				body: {
-					offset: page === 1 ? 0 : FETCH_LIMIT * page,
-					limit
-				}
-			}),
+			query: ({ page = 1, limit = FETCH_LIMIT }) => {
+				console.log('POST:ROUTES offset=', page === 1 ? 0 : FETCH_LIMIT * page, ' limit=', limit)
+				return {
+					url: REST_END.routes,
+					method: 'POST',
+					body: {
+						offset: page === 1 ? 0 : FETCH_LIMIT * page,
+						limit
+					}
+			}},
 			transformResponse: (response: IResponse<IRoute>) => {
 				return response.array
-			},
+			}
 		}),
 		fetchQuests: build.mutation<IRoute[], IFetchRoutesData>({
 			query: ({ page = 1, limit = FETCH_LIMIT }) => ({

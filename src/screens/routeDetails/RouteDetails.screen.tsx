@@ -159,7 +159,6 @@ const RouteDetailsScreen = ({ route: navigation }: any) => {
 	}
 
 	if (type === 'quest') {
-
 		const [getQuest, { data: quest, isLoading, error }] = routeAPI.useGetQuestMutation()
 
 		useEffect(() => {

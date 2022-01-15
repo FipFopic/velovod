@@ -3,7 +3,6 @@ import { NativeScrollEvent, NativeSyntheticEvent, ScrollView, View } from 'react
 import { Tab, TabBar, Text, useStyleSheet, ViewPager } from '@ui-kitten/components'
 import NavigationService from '../../core/utils/Navigation.service'
 import { IRoute, RouteType } from '../../core/interfaces/IRoute'
-import { useThrottle } from '../../core/hooks/useThrottle'
 import { useAppSelector } from '../../core/hooks/redux'
 import { routeAPI } from '../../services/route/RouteService'
 import RouteCard from '../../components/RouteCard/RouteCard'
@@ -23,8 +22,16 @@ const tabs: RouteTab[] = [
 	}
 ]
 
-let routesPage = 1
-let questsPage = 1
+const pagination: any = {
+	routes: {
+		page: 1,
+		isEnd: false
+	},
+	quests: {
+		page: 1,
+		isEnd: false
+	}
+}
 
 const RoutesScreen = () => {
 	const styles = useStyleSheet(themedStyles)
@@ -35,7 +42,7 @@ const RoutesScreen = () => {
 		error: errorRoutes
 	}] = routeAPI.useFetchRoutesMutation()
 
-	const [fetchQuests,{
+	const [fetchQuests, {
 		data: questsChunk,
 		isLoading: isLoadingQuests,
 		error: errorQuests
@@ -43,7 +50,6 @@ const RoutesScreen = () => {
 
 	const { isAuth } = useAppSelector(state => state.auth)
 	const callback = useCallback(() => console.log('Движение мыши'), [])
-	const throttleMouseMove = useThrottle(callback, 1000)
 
 	const scrollHandler = ({ nativeEvent }: NativeSyntheticEvent<NativeScrollEvent>) => {
 		console.log('scrollHandler')
@@ -64,31 +70,40 @@ const RoutesScreen = () => {
 
 	useEffect(() => {
 		loadRoutes()
-		fetchQuests({ page: 1 })
+		loadQuests()
 	}, [])
 
 	useEffect(() => {
+		console.log('routesChunk ', routesChunk)
 		if (routesChunk?.length) {
 			setRouteList([...routeList, ...routesChunk])
+		} else if (routesChunk?.length === 0) {
+			pagination.routes.isEnd = true
 		}
 	}, [routesChunk])
 
 	useEffect(() => {
 		if (questsChunk?.length) {
 			setQuestList([...questList, ...questsChunk])
+		} else if (questsChunk?.length === 0) {
+			pagination.quests.isEnd = true
 		}
 	}, [questsChunk])
 
 	const loadRoutes = () => {
-		console.log('loadRoutes')
-		fetchRoutes({ page: routesPage })
-		routesPage++
+		if (!pagination.routes.isEnd) {
+			console.log('loadRoutes page=', pagination.routes.page)
+			fetchRoutes({ page: pagination.routes.page })
+			pagination.routes.page++
+		}
 	}
 
 	const loadQuests = () => {
-		console.log('loadQuests')
-		fetchQuests({ page: questsPage })
-		questsPage++
+		if (!pagination.quests.isEnd) {
+			console.log('loadQuests')
+			fetchQuests({ page: pagination.quests.page })
+			pagination.quests.page++
+		}
 	}
 
 	const onPressRouteCard = (route: IRoute, type: RouteType) => {
@@ -96,7 +111,6 @@ const RoutesScreen = () => {
 			id: route.id,
 			type
 		})
-
 	}
 
 	return (
@@ -122,7 +136,7 @@ const RoutesScreen = () => {
 							onSelect={ idx => setActiveTab(tabs[idx]) }
 						>
 
-							{/*TODO add filter*/}
+							{/* TODO add filter */}
 
 							<ScrollView
 								contentContainerStyle={styles.roadRoutesBox}
