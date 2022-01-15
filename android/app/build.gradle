@@ -130,6 +130,10 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
+	lintOptions {
+		checkReleaseBuilds false
+	}
+
     defaultConfig {
         applicationId "com.velovod"
         minSdkVersion rootProject.ext.minSdkVersion

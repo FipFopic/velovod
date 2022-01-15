@@ -1,4 +1,4 @@
-import {IUser} from './IUser';
+import { IUser } from './IUser'
 
 export type RouteType = 'route' | 'quest'
 
@@ -71,8 +71,7 @@ export interface IQuestUser {
 	user: IUser
 }
 
-export interface ILocation {
-	index: number
+export interface ICoords {
 	latitude: number
 	longitude: number
 }

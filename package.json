@@ -28,10 +28,9 @@
     "react-native-safe-area-context": "^3.3.2",
     "react-native-screens": "^3.10.1",
     "react-native-svg": "^9.12.0",
-    "react-native-vkontakte-login": "^0.2.0",
+    "react-native-vkontakte-login": "^1.0.1",
     "react-redux": "^7.2.6",
-    "redux-logger": "^3.0.6",
-    "rn-fetch-blob": "^0.12.0"
+    "redux-logger": "^3.0.6"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
