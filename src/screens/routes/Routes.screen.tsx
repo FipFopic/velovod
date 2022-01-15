@@ -68,13 +68,15 @@ const RoutesScreen = () => {
 	}, [])
 
 	useEffect(() => {
-		if (routesChunk?.length)
-			setRouteList([ ...routeList, ...routesChunk ])
+		if (routesChunk?.length) {
+			setRouteList([...routeList, ...routesChunk])
+		}
 	}, [routesChunk])
 
 	useEffect(() => {
-		if (questsChunk?.length)
-			setQuestList([ ...questList, ...questsChunk ])
+		if (questsChunk?.length) {
+			setQuestList([...questList, ...questsChunk])
+		}
 	}, [questsChunk])
 
 	const loadRoutes = () => {

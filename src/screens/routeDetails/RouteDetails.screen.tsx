@@ -9,11 +9,10 @@ import { routeAPI } from '../../services/route/RouteService'
 import PointsList from '../../components/PointsList/PointsList'
 import OwnerInfo from '../../components/OwnerInfo/OwnerInfo'
 import themedStyles from './RouteDetails.style'
-import {getQuestRouteType} from './RouteDetails.helper';
+import { getQuestRouteType } from './RouteDetails.helper'
 
 const RouteDetailsScreen = ({ route: navigation }: any) => {
 	const styles = useStyleSheet(themedStyles)
-
 	const id = +navigation.params?.id || null
 	const type = navigation.params?.type || null
 
