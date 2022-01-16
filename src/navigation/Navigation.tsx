@@ -39,10 +39,17 @@ const RoutesScreenStack = () => {
 			<RoutesStack.Screen
 				name='Routes'
 				component={RoutesScreen}
+				options={{
+					title: 'Маршруты'
+					// headerShown: false
+				}}
 			/>
 			<RoutesStack.Screen
 				name='RouteDetails'
 				component={RouteDetailsScreen}
+				options={{
+					title: 'О маршруте'
+				}}
 			/>
 		</RoutesStack.Navigator>
 	)
@@ -80,18 +87,30 @@ const ProfileScreenStack = () => {
 			<ProfileStack.Screen
 				name='Profile'
 				component={ProfileScreen}
+				options={{
+					title: 'Профиль'
+				}}
 			/>
 			<ProfileStack.Screen
 				name='UpdateProfile'
 				component={UpdateProfileScreen}
+				options={{
+					title: 'Редактировать'
+				}}
 			/>
 			<ProfileStack.Screen
 				name='Login'
 				component={LoginScreen}
+				options={{
+					title: 'Авторизация'
+				}}
 			/>
 			<ProfileStack.Screen
 				name='Signup'
 				component={SignupScreen}
+				options={{
+					title: 'Регистрация'
+				}}
 			/>
 		</ProfileStack.Navigator>
 	)
@@ -114,7 +133,7 @@ const Navigation = () => {
 					options={{
 						tabBarLabel: 'Маршруты',
 						tabBarIcon: ({ focused }) =>
-							getTabBarIcon('map-outline',{ isFocused: focused })
+							getTabBarIcon('map-outline', { isFocused: focused })
 					}}
 				/>
 
@@ -122,9 +141,9 @@ const Navigation = () => {
 					name='MapStack'
 					component={MapScreenStack}
 					options={{
-					tabBarLabel: 'Карта',
-					tabBarIcon: ({ focused }) =>
-						getTabBarIcon('navigation-2-outline',{ isFocused: focused })
+						tabBarLabel: 'Карта',
+						tabBarIcon: ({ focused }) =>
+							getTabBarIcon('navigation-2-outline', { isFocused: focused })
 					}}
 				/>
 
@@ -134,7 +153,7 @@ const Navigation = () => {
 					options={{
 						tabBarLabel: 'Профиль',
 						tabBarIcon: ({ focused }) =>
-							getTabBarIcon('person-outline',{ isFocused: focused })
+							getTabBarIcon('person-outline', { isFocused: focused })
 					}}
 				/>
 			</TabNavigation.Navigator>
