@@ -55,10 +55,6 @@ const SignupScreen = () => {
 						!!error &&
 						<Text>{ error }</Text>
 					}
-					{
-						isLoading &&
-						<Text>Loading...</Text>
-					}
 					<View style={styles.inputGroup}>
 						<Input
 							style={styles.signupInput}
@@ -92,7 +88,7 @@ const SignupScreen = () => {
 							size="medium"
 							disabled={ !_isFormValid() || isLoading }
 							onPress={onPressRegister}
-						>Зарегистрироваться</Button>
+						>{ isLoading ? 'Загрузка...' : 'Зарегистрироваться' }</Button>
 						<Button
 							style={styles.signupButton}
 							size="small"

@@ -108,7 +108,6 @@ export const doAuthWithVK = createAsyncThunk(
 			} else {
 				return thunkAPI.rejectWithValue('Непредвиденная ошибка!')
 			}
-
 		} catch (e) {
 			return thunkAPI.rejectWithValue('Ошибка авторизации через ВКонтакте')
 		}

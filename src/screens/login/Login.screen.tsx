@@ -66,10 +66,6 @@ const LoginScreen = () => {
 						!!error &&
 						<Text>{ error }</Text>
 					}
-					{
-						isLoading &&
-						<Text>Loading...</Text>
-					}
 					<View style={styles.inputGroup}>
 						<Input
 							style={styles.loginInput}
@@ -95,9 +91,9 @@ const LoginScreen = () => {
 							appearance="outline"
 							// status="control"
 							size="medium"
-							disabled={!_isFormValid()}
+							disabled={!_isFormValid() || isLoading}
 							onPress={onPressLogin}
-						>Войти</Button>
+						>{ isLoading ? 'Загрузка...' : 'Войти' }</Button>
 						<Button
 							style={styles.loginButton}
 							size="small"

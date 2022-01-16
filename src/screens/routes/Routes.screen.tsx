@@ -1,6 +1,13 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react'
 import { NativeScrollEvent, NativeSyntheticEvent, ScrollView, View } from 'react-native'
-import { Tab, TabBar, Text, useStyleSheet, ViewPager } from '@ui-kitten/components'
+import {
+	Spinner,
+	Tab,
+	TabBar,
+	Text,
+	useStyleSheet,
+	ViewPager,
+} from '@ui-kitten/components'
 import NavigationService from '../../core/utils/Navigation.service'
 import { IRoute, RouteType } from '../../core/interfaces/IRoute'
 import { useAppSelector } from '../../core/hooks/redux'
@@ -145,6 +152,18 @@ const RoutesScreen = () => {
 								onScroll={scrollHandler}
 							>
 								{
+									errorRoutes &&
+									<View>
+										<Text>{errorRoutes.toString()}</Text>
+									</View>
+								}
+								{
+									isLoadingRoutes &&
+									<View>
+										<Spinner />
+									</View>
+								}
+								{
 									routeList &&
 									routeList.map((route, idx) =>
 										<RouteCard
@@ -179,6 +198,12 @@ const RoutesScreen = () => {
 									errorQuests &&
 									<View>
 										<Text>{errorQuests.toString()}</Text>
+									</View>
+								}
+								{
+									isLoadingQuests &&
+									<View>
+										<Spinner />
 									</View>
 								}
 								{
