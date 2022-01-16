@@ -1,6 +1,7 @@
 import React, { FC } from 'react'
 import { Image, Text, View } from 'react-native'
 import { useStyleSheet } from '@ui-kitten/components'
+import FastImage from 'react-native-fast-image'
 import themedStyles from './OwnerInfo.style'
 
 interface OwnerInfoProps {
@@ -13,8 +14,14 @@ const OwnerInfo: FC<OwnerInfoProps> = ({ name, photo}) => {
 
 	return (
 		<View style={styles.ownerBox}>
-			{/* @ts-ignore*/}
-			<Image style={styles.ownerPhoto} source={{uri: photo}} />
+			<FastImage
+				// @ts-ignore
+				style={styles.ownerPhoto}
+				source={{
+					uri: photo,
+					cache: FastImage.cacheControl.immutable
+				}}
+			/>
 			<Text style={styles.textName}>
 				{ name }
 			</Text>

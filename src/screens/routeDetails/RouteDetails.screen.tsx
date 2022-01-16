@@ -9,6 +9,7 @@ import {
 	useStyleSheet,
 	ViewPager
 } from '@ui-kitten/components'
+import FastImage from 'react-native-fast-image'
 import NavigationService from '../../core/utils/Navigation.service'
 import { IPoint } from '../../core/interfaces/IRoute'
 import { getImageSrc } from '../../core/utils/Main.helper'
@@ -60,10 +61,13 @@ const RouteDetailsScreen = ({ route: navigation }: any) => {
 						<View style={styles.roadDetailsBox}>
 
 							<View style={styles.roadBox}>
-								<Image
+								<FastImage
 									// @ts-ignore
 									style={styles.roadImage}
-									source={{ uri: getImageSrc(route?.cover?.id, 1080) }}
+									source={{
+										uri: getImageSrc(route?.cover?.id, 1080),
+										cache: FastImage.cacheControl.immutable
+									}}
 								/>
 								{
 									error &&
@@ -184,7 +188,7 @@ const RouteDetailsScreen = ({ route: navigation }: any) => {
 						<View style={styles.roadDetailsBox}>
 
 							<View style={styles.roadBox}>
-								<Image
+								<FastImage
 									// @ts-ignore
 									style={styles.roadImage}
 									source={{ uri: getImageSrc(quest?.cover?.id, 1080) }}

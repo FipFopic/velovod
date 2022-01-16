@@ -1,6 +1,8 @@
 import React, { FC } from 'react'
 import { Image, Text, View } from 'react-native'
 import { useStyleSheet } from '@ui-kitten/components'
+import FastImage from 'react-native-fast-image'
+import { getImageSrc } from '../../core/utils/Main.helper'
 import themedStyles from './Point.style'
 
 interface OwnerInfoProps {
@@ -12,25 +14,31 @@ interface OwnerInfoProps {
 }
 
 const OwnerInfo: FC<OwnerInfoProps> = ({ title, photo, style, children }) => {
-  const styles = useStyleSheet(themedStyles)
+	const styles = useStyleSheet(themedStyles)
 
 	return (
-    <View style={{ ...style, ...styles.pointBox }}>
-			{/* @ts-ignore*/}
-			<Image style={styles.pointPhoto} source={{uri: photo}} />
-      <Text style={styles.title}>
+		<View style={{ ...style, ...styles.pointBox }}>
+			<FastImage
+				// @ts-ignore
+				style={styles.pointPhoto}
+				source={{
+					uri: photo,
+					cache: FastImage.cacheControl.immutable
+				}}
+			/>
+			<Text style={styles.title}>
 				{ title }
 			</Text>
 
-      {
-        children &&
+			{
+				children &&
 				<View style={styles.childrenBox}>
 					{ children }
 				</View>
-      }
+			}
 
-    </View>
-  )
+		</View>
+	)
 }
 
 export default OwnerInfo

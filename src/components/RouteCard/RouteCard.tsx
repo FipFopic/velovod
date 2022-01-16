@@ -1,6 +1,7 @@
 import React, { FC } from 'react'
 import { Image, View, Text, TouchableOpacity } from 'react-native'
 import { useStyleSheet, Icon } from '@ui-kitten/components'
+import FastImage from 'react-native-fast-image'
 import { IRoute, RouteType } from '../../core/interfaces/IRoute'
 import { getImageSrc } from '../../core/utils/Main.helper'
 import themedStyles from './RouteCard.style'
@@ -43,8 +44,14 @@ const RouteCard: FC<RouteCardProps> = ({ route, type, onPress }) => {
 		>
 
 			<View style={styles.cardImageBox}>
-				{/*@ts-ignore*/}
-				<Image style={styles.cardImage} source={{ uri: getImageSrc(cover?.id, 720) }} />
+				<FastImage
+					// @ts-ignore
+					style={styles.cardImage}
+					source={{
+						uri: getImageSrc(cover?.id, 720),
+						cache: FastImage.cacheControl.immutable
+					}}
+				/>
 			</View>
 
 			<View style={styles.detailsBox}>
