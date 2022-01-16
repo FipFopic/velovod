@@ -5,11 +5,13 @@ import { IUser } from '../../core/interfaces/IUser'
 import { REST_API, REST_END } from '../../config'
 import { IProfileUpdateData } from './types'
 
+const CACHING_TIME = 60 * 10
+
 export const userAPI = createApi({
 	reducerPath: 'userAPI',
 	baseQuery: fetchBaseQuery({
 		baseUrl: REST_API,
-		prepareHeaders: (async headers => {
+		prepareHeaders: async headers => {
 			const accessToken = await getFromStorage('accessToken')
 			if (accessToken) {
 				headers.set('Authorization', `Bearer ${accessToken}`)
@@ -17,11 +19,11 @@ export const userAPI = createApi({
 			headers.set('Content-Type', 'application/json')
 
 			return headers
-		})
+		}
 	}),
 	tagTypes: ['Profile'],
 	endpoints: (build) => ({
-		getProfile: build.mutation<IUser, void>({
+		getProfile: build.query<IUser, void>({
 			query: () => ({
 				url: REST_END.userProfile,
 				method: 'POST'
@@ -29,7 +31,8 @@ export const userAPI = createApi({
 			transformResponse: (response: IResponse<IUser>) => {
 				return response.array[0]
 			},
-			// invalidatesTags: ['Profile']
+			keepUnusedDataFor: CACHING_TIME,
+			providesTags: ['Profile']
 		}),
 		updateProfile: build.mutation<IResponse<IUser>, IProfileUpdateData>({
 			query: ({ name, email, id }) => ({

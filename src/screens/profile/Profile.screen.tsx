@@ -12,13 +12,9 @@ const ProfileScreen = () => {
 
 	const dispatch = useAppDispatch()
 	const { isAuth } = useAppSelector(state => state.auth)
-	const [getProfile, { data: user, isLoading, error }] = userAPI.useGetProfileMutation()
-
-	useEffect(() => {
-		if (isAuth) {
-			getProfile()
-		}
-	}, [isAuth])
+	const { data: user, isLoading, error } = userAPI.useGetProfileQuery(undefined, {
+		skip: !isAuth
+	})
 
 	const onPressLogout = () => {
 		dispatch(doLogout())

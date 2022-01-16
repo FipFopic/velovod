@@ -1,9 +1,9 @@
-import { NativeScrollEvent, NativeSyntheticEvent } from 'react-native'
+import { NativeScrollEvent } from 'react-native'
 import { RouteType } from '../../core/interfaces/IRoute'
 
 export interface RouteTab {
-	id: number,
-	title: string,
+	id: number
+	title: string
 	type: RouteType
 }
 

@@ -89,11 +89,11 @@ const SignupScreen = () => {
 							disabled={ !_isFormValid() || isLoading }
 							onPress={onPressRegister}
 						>{ isLoading ? 'Загрузка...' : 'Зарегистрироваться' }</Button>
-						<Button
-							style={styles.signupButton}
-							size="small"
-							onPress={onPressNavigateLogin}
-						>Вход</Button>
+						{/*<Button*/}
+						{/*	style={styles.signupButton}*/}
+						{/*	size="small"*/}
+						{/*	onPress={onPressNavigateLogin}*/}
+						{/*>Вход</Button>*/}
 					</View>
 				</View>
 
@@ -103,10 +103,10 @@ const SignupScreen = () => {
 						accessoryLeft={VKIcon}
 					>Войти через ВКонтакте</Button>
 
-					<Button
-						style={styles.socialButton}
-						accessoryLeft={FacebookIcon}
-					>Войти через Facebook</Button>
+					{/*<Button*/}
+					{/*	style={styles.socialButton}*/}
+					{/*	accessoryLeft={FacebookIcon}*/}
+					{/*>Войти через Facebook</Button>*/}
 				</View>
 			</View>
 		</>

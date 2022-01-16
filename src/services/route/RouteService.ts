@@ -6,6 +6,7 @@ import { REST_API, REST_END } from '../../config'
 import { IFetchRoutesData } from './types'
 
 const FETCH_LIMIT = 10
+const CACHING_TIME = 60 * 10
 
 export const routeAPI = createApi({
 	reducerPath: 'routeAPI',
@@ -21,24 +22,27 @@ export const routeAPI = createApi({
 			return headers
 		}
 	}),
-	tagTypes: ['Route'],
+	tagTypes: ['Route', 'Quest'],
 	endpoints: (build) => ({
-		fetchRoutes: build.mutation<IRoute[], IFetchRoutesData>({
-			query: ({ page = 1, limit = FETCH_LIMIT }) => {
-				console.log('POST:ROUTES offset=', page === 1 ? 0 : FETCH_LIMIT * page, ' limit=', limit)
-				return {
-					url: REST_END.routes,
-					method: 'POST',
-					body: {
-						offset: page === 1 ? 0 : FETCH_LIMIT * page,
-						limit
-					}
-			}},
+		fetchRoutes: build.query<IRoute[], IFetchRoutesData>({
+			query: ({ page = 1, limit = FETCH_LIMIT }) => ({
+				url: REST_END.routes,
+				method: 'POST',
+				body: {
+					offset: page === 1 ? 0 : FETCH_LIMIT * page,
+					limit
+				}
+			}),
 			transformResponse: (response: IResponse<IRoute>) => {
 				return response.array
-			}
+			},
+			keepUnusedDataFor: CACHING_TIME,
+			providesTags: result =>
+				result
+					? [...result.map(({ id }) => ({ type: 'Route' as const, id })), 'Route']
+					: ['Route']
 		}),
-		fetchQuests: build.mutation<IRoute[], IFetchRoutesData>({
+		fetchQuests: build.query<IRoute[], IFetchRoutesData>({
 			query: ({ page = 1, limit = FETCH_LIMIT }) => ({
 				url: REST_END.quests,
 				method: 'POST',
@@ -49,9 +53,14 @@ export const routeAPI = createApi({
 			}),
 			transformResponse: (response: IResponse<IRoute>) => {
 				return response.array
-			}
+			},
+			keepUnusedDataFor: CACHING_TIME,
+			providesTags: result =>
+				result
+					? [...result.map(({ id }) => ({ type: 'Quest' as const, id })), 'Quest']
+					: ['Quest']
 		}),
-		getRoute: build.mutation<IRoute, number>({
+		getRoute: build.query<IRoute, number>({
 			query: (id) => ({
 				url: REST_END.routeDetails,
 				method: 'POST',
@@ -61,9 +70,11 @@ export const routeAPI = createApi({
 			}),
 			transformResponse: (response: IResponse<IRoute>) => {
 				return response.array[0]
-			}
+			},
+			keepUnusedDataFor: CACHING_TIME,
+			providesTags: ['Route']
 		}),
-		getQuest: build.mutation<IRoute, number>({
+		getQuest: build.query<IRoute, number>({
 			query: (id) => ({
 				url: REST_END.questDetails,
 				method: 'POST',
@@ -73,7 +84,9 @@ export const routeAPI = createApi({
 			}),
 			transformResponse: (response: IResponse<IRoute>) => {
 				return response.array[0]
-			}
+			},
+			keepUnusedDataFor: CACHING_TIME,
+			providesTags: ['Quest']
 		})
 	})
 })

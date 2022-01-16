@@ -1,6 +1,7 @@
 import React, { FC, useEffect, useState } from 'react'
 import { View } from 'react-native'
 import { Button, Input, Text, useStyleSheet } from '@ui-kitten/components'
+import NavigationService from '../../core/utils/Navigation.service'
 import { userAPI } from '../../services/user/UserService'
 import { EMAIL_PATTERN } from '../../config'
 import themedStyles from './UpdateProfile.style'
@@ -16,10 +17,12 @@ const UpdateProfileScreen = ({ route: navigation }: any) => {
 	const [email, setEmail] = useState('')
 
 	useEffect(() => {
-		if (user?.name)
+		if (user?.name) {
 			setName(user.name)
-		if (user?.email)
+		}
+		if (user?.email) {
 			setEmail(user.email)
+		}
 	}, [user])
 
 	const _isFormValid = () => {
@@ -28,6 +31,7 @@ const UpdateProfileScreen = ({ route: navigation }: any) => {
 
 	const onPressUpdate = () => {
 		updateProfile({ name, email, id: user.id })
+		NavigationService.goBack()
 	}
 
 	if (!user) {

@@ -1,6 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import { Image, ScrollView, View } from 'react-native'
-import { Button, Tab, TabBar, Text, useStyleSheet, ViewPager } from '@ui-kitten/components'
+import {
+	Button,
+	Spinner,
+	Tab,
+	TabBar,
+	Text,
+	useStyleSheet,
+	ViewPager
+} from '@ui-kitten/components'
 import NavigationService from '../../core/utils/Navigation.service'
 import { IPoint } from '../../core/interfaces/IRoute'
 import { getImageSrc } from '../../core/utils/Main.helper'
@@ -8,8 +16,8 @@ import { useAppSelector } from '../../core/hooks/redux'
 import { routeAPI } from '../../services/route/RouteService'
 import PointsList from '../../components/PointsList/PointsList'
 import OwnerInfo from '../../components/OwnerInfo/OwnerInfo'
-import themedStyles from './RouteDetails.style'
 import { getQuestRouteType } from './RouteDetails.helper'
+import themedStyles from './RouteDetails.style'
 
 const RouteDetailsScreen = ({ route: navigation }: any) => {
 	const styles = useStyleSheet(themedStyles)
@@ -29,13 +37,9 @@ const RouteDetailsScreen = ({ route: navigation }: any) => {
 	const { isAuth } = useAppSelector(state => state.auth)
 
 	if (type === 'route') {
-		const [getRoute, { data: route, isLoading, error }] = routeAPI.useGetRouteMutation()
+		const { data: route, isLoading, error } = routeAPI.useGetRouteQuery(id)
 
 		const [points, setPoints] = useState<IPoint[]>([])
-
-		useEffect(() => {
-			getRoute(id)
-		}, [])
 
 		useEffect(() => {
 			if (route?.points) {
@@ -61,18 +65,24 @@ const RouteDetailsScreen = ({ route: navigation }: any) => {
 									style={styles.roadImage}
 									source={{ uri: getImageSrc(route?.cover?.id, 1080) }}
 								/>
-
 								{
-									points && !isLoading &&
+									error &&
+									<View>
+										<Text>Произошла ошибка...</Text>
+									</View>
+								}
+								{
+									isLoading &&
+									<View>
+										<Spinner />
+									</View>
+								}
+								{
+									!isLoading && !error && points.length > 0 &&
 									<Button
 										onPress={onPressStartRoute}
 									>Начать маршрут</Button>
 								}
-
-								{/*{*/}
-								{/*	isAudioLoading &&*/}
-								{/*	<Spinner/>*/}
-								{/*}*/}
 
 								<OwnerInfo
 									name={route?.author?.name || ''}
@@ -159,15 +169,7 @@ const RouteDetailsScreen = ({ route: navigation }: any) => {
 	}
 
 	if (type === 'quest') {
-		const [getQuest, { data: quest, isLoading, error }] = routeAPI.useGetQuestMutation()
-
-		useEffect(() => {
-			getQuest(id)
-		}, [])
-
-		useEffect(() => {
-
-		}, [quest])
+		const { data: quest, isLoading, error } = routeAPI.useGetQuestQuery(id)
 
 		const onPressStartQuest = () => {
 			if (!isAuth) {
@@ -182,15 +184,25 @@ const RouteDetailsScreen = ({ route: navigation }: any) => {
 						<View style={styles.roadDetailsBox}>
 
 							<View style={styles.roadBox}>
-
 								<Image
 									// @ts-ignore
 									style={styles.roadImage}
 									source={{ uri: getImageSrc(quest?.cover?.id, 1080) }}
 								/>
-
 								{
-									quest?.count_point &&
+									error &&
+									<View>
+										<Text>Произошла ошибка...</Text>
+									</View>
+								}
+								{
+									isLoading &&
+									<View>
+										<Spinner />
+									</View>
+								}
+								{
+									quest?.count_point && false &&
 									<Button
 										onPress={onPressStartQuest}
 									>Начать квест</Button>
@@ -216,7 +228,6 @@ const RouteDetailsScreen = ({ route: navigation }: any) => {
 										<Text>Порядок точек { quest?.option_random_point ? 'Случайный' : 'Упорядоченный' }</Text>
 									</>
 								}
-
 							</View>
 
 						</View>

@@ -94,11 +94,11 @@ const LoginScreen = () => {
 							disabled={!_isFormValid() || isLoading}
 							onPress={onPressLogin}
 						>{ isLoading ? 'Загрузка...' : 'Войти' }</Button>
-						<Button
-							style={styles.loginButton}
-							size="small"
-							onPress={onPressNavigateRegister}
-						>Регистрация</Button>
+						{/*<Button*/}
+						{/*	style={styles.loginButton}*/}
+						{/*	size="small"*/}
+						{/*	onPress={onPressNavigateRegister}*/}
+						{/*>Регистрация</Button>*/}
 					</View>
 				</View>
 
@@ -109,11 +109,11 @@ const LoginScreen = () => {
 						onPress={onPressVKAuth}
 					>Войти через ВКонтакте</Button>
 
-					<Button
-						style={styles.socialButton}
-						accessoryLeft={FacebookIcon}
-						// onPress={doLoginWithFB}
-					>Войти через Facebook</Button>
+					{/*<Button*/}
+					{/*	style={styles.socialButton}*/}
+					{/*	accessoryLeft={FacebookIcon}*/}
+					{/*	// onPress={doLoginWithFB}*/}
+					{/*>Войти через Facebook</Button>*/}
 				</View>
 			</View>
 		</>

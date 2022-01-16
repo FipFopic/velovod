@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { NativeScrollEvent, NativeSyntheticEvent, ScrollView, View } from 'react-native'
 import {
 	Spinner,
@@ -6,11 +6,10 @@ import {
 	TabBar,
 	Text,
 	useStyleSheet,
-	ViewPager,
+	ViewPager
 } from '@ui-kitten/components'
 import NavigationService from '../../core/utils/Navigation.service'
 import { IRoute, RouteType } from '../../core/interfaces/IRoute'
-import { useAppSelector } from '../../core/hooks/redux'
 import { routeAPI } from '../../services/route/RouteService'
 import RouteCard from '../../components/RouteCard/RouteCard'
 import { isEndOfScroll, RouteTab } from './Routes.helper'
@@ -29,63 +28,34 @@ const tabs: RouteTab[] = [
 	}
 ]
 
-const pagination: any = {
-	routes: {
-		page: 1,
-		isEnd: false
-	},
-	quests: {
-		page: 1,
-		isEnd: false
-	}
-}
-
 const RoutesScreen = () => {
 	const styles = useStyleSheet(themedStyles)
 
-	const [fetchRoutes, {
+	const [activeTab, setActiveTab] = useState<RouteTab>(tabs[0])
+	const [routeList, setRouteList] = useState<IRoute[]>([])
+	const [routePage, setRoutePage] = useState(1)
+	const [isEndRoute, setEndRoute] = useState(false)
+	const [questList, setQuestList] = useState<IRoute[]>([])
+	const [questPage, setQuestPage] = useState(1)
+	const [isEndQuest, setEndQuest] = useState(false)
+
+	const {
 		data: routesChunk,
 		isLoading: isLoadingRoutes,
 		error: errorRoutes
-	}] = routeAPI.useFetchRoutesMutation()
+	} = routeAPI.useFetchRoutesQuery({ page: routePage }, { skip: isEndRoute })
 
-	const [fetchQuests, {
+	const {
 		data: questsChunk,
 		isLoading: isLoadingQuests,
 		error: errorQuests
-	}] = routeAPI.useFetchQuestsMutation()
-
-	const { isAuth } = useAppSelector(state => state.auth)
-	const callback = useCallback(() => console.log('Движение мыши'), [])
-
-	const scrollHandler = ({ nativeEvent }: NativeSyntheticEvent<NativeScrollEvent>) => {
-		console.log('scrollHandler')
-		if (!isEndOfScroll(nativeEvent)) {
-			return
-		}
-
-		console.log('LOAD')
-		if (activeTab.type === 'route') {
-			loadRoutes()
-		} else if (activeTab.type === 'quest') {
-			loadQuests()
-		}
-	}
-	const [activeTab, setActiveTab] = useState<RouteTab>(tabs[0])
-	const [routeList, setRouteList] = useState<IRoute[]>([])
-	const [questList, setQuestList] = useState<IRoute[]>([])
+	} = routeAPI.useFetchQuestsQuery({ page: questPage }, { skip: isEndQuest })
 
 	useEffect(() => {
-		loadRoutes()
-		loadQuests()
-	}, [])
-
-	useEffect(() => {
-		console.log('routesChunk ', routesChunk)
 		if (routesChunk?.length) {
 			setRouteList([...routeList, ...routesChunk])
 		} else if (routesChunk?.length === 0) {
-			pagination.routes.isEnd = true
+			setEndRoute(true)
 		}
 	}, [routesChunk])
 
@@ -93,31 +63,27 @@ const RoutesScreen = () => {
 		if (questsChunk?.length) {
 			setQuestList([...questList, ...questsChunk])
 		} else if (questsChunk?.length === 0) {
-			pagination.quests.isEnd = true
+			setEndQuest(true)
 		}
 	}, [questsChunk])
-
-	const loadRoutes = () => {
-		if (!pagination.routes.isEnd) {
-			console.log('loadRoutes page=', pagination.routes.page)
-			fetchRoutes({ page: pagination.routes.page })
-			pagination.routes.page++
-		}
-	}
-
-	const loadQuests = () => {
-		if (!pagination.quests.isEnd) {
-			console.log('loadQuests')
-			fetchQuests({ page: pagination.quests.page })
-			pagination.quests.page++
-		}
-	}
 
 	const onPressRouteCard = (route: IRoute, type: RouteType) => {
 		NavigationService.push('RouteDetails', {
 			id: route.id,
 			type
 		})
+	}
+
+	const scrollHandler = ({ nativeEvent }: NativeSyntheticEvent<NativeScrollEvent>) => {
+		if (!isEndOfScroll(nativeEvent)) {
+			return
+		}
+
+		if (activeTab.type === 'route') {
+			setRoutePage(routePage + 1)
+		} else if (activeTab.type === 'quest') {
+			setQuestPage(questPage + 1)
+		}
 	}
 
 	return (
@@ -152,6 +118,17 @@ const RoutesScreen = () => {
 								onScroll={scrollHandler}
 							>
 								{
+									routeList &&
+									routeList.map((route, idx) =>
+										<RouteCard
+											key={`${route.id}-${idx}`}
+											route={route}
+											type='route'
+											onPress={() => onPressRouteCard(route, 'route')}
+										/>
+									)
+								}
+								{
 									errorRoutes &&
 									<View>
 										<Text>{errorRoutes.toString()}</Text>
@@ -163,37 +140,23 @@ const RoutesScreen = () => {
 										<Spinner />
 									</View>
 								}
-								{
-									routeList &&
-									routeList.map((route, idx) =>
-										<RouteCard
-											key={`${route.id}-${idx}`}
-											route={route}
-											type='route'
-											onPress={() => onPressRouteCard(route, 'route')}
-										/>
-									)
-								}
-								{/*{*/}
-								{/*	simpleList &&*/}
-								{/*	simpleList.map((route, idx) =>*/}
-								{/*		<RouteCard*/}
-								{/*			key={route.id + '' + idx}*/}
-								{/*			type={RoutesEnum.SIMPLE_ROUTE}*/}
-								{/*			route={route}*/}
-								{/*		/>*/}
-								{/*	)*/}
-								{/*}*/}
-								{/*{*/}
-								{/*	isPreloader && isPagLoading &&*/}
-								{/*	<Spinner/>*/}
-								{/*}*/}
 							</ScrollView>
 
 							<ScrollView
 								contentContainerStyle={styles.roadRoutesBox}
 								showsVerticalScrollIndicator={false}
 							>
+								{
+									questList &&
+									questList.map((quest, idx) =>
+										<RouteCard
+											key={`${quest.id}-${idx}`}
+											route={quest}
+											type='quest'
+											onPress={() => onPressRouteCard(quest, 'quest')}
+										/>
+									)
+								}
 								{
 									errorQuests &&
 									<View>
@@ -206,31 +169,6 @@ const RoutesScreen = () => {
 										<Spinner />
 									</View>
 								}
-								{
-									questList &&
-									questList.map((quest, idx) =>
-										<RouteCard
-											key={`${quest.id}-${idx}`}
-											route={quest}
-											type='quest'
-											onPress={() => onPressRouteCard(quest, 'quest')}
-										/>
-									)
-								}
-								{/*{*/}
-								{/*	questList &&*/}
-								{/*	questList.map((route, idx) =>*/}
-								{/*		<RouteCard*/}
-								{/*			key={route.id + '' + idx}*/}
-								{/*			type={RoutesEnum.QUEST_ROUTE}*/}
-								{/*			route={route}*/}
-								{/*		/>*/}
-								{/*	)*/}
-								{/*}*/}
-								{/*{*/}
-								{/*	isPreloader && isPagLoading &&*/}
-								{/*	<Spinner/>*/}
-								{/*}*/}
 							</ScrollView>
 						</ViewPager>
 					</View>
