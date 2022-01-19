@@ -6,19 +6,19 @@ const { DEFAULT_BOX_SIZE, BORDER_RADIUS } = theme
 const themedStyles = StyleService.create({
 	backgroundBox: {
 		width: '100%',
-		height:' 100%',
+		height: '100%',
 		display: 'flex',
 		alignItems: 'center',
 		justifyContent: 'center'
 	},
 	loginBox: {
 		width: DEFAULT_BOX_SIZE,
-		height: '50%',
+		height: 350,
 		borderRadius: BORDER_RADIUS,
 		display: 'flex',
 		alignItems: 'center',
 		justifyContent: 'center',
-		backgroundColor: '#fff',
+		backgroundColor: '#fff'
 	},
 	titleBox: {
 		height: '10%'
@@ -29,7 +29,7 @@ const themedStyles = StyleService.create({
 	inputGroup: {
 		height: '30%',
 		display: 'flex',
-		justifyContent: 'space-around',
+		justifyContent: 'space-around'
 	},
 	loginInput: {
 		width: '70%'

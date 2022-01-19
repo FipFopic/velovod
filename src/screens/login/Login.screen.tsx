@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View } from 'react-native'
+import { KeyboardAvoidingView, View } from 'react-native'
 import { Button, Icon, Input, Text, useStyleSheet } from '@ui-kitten/components'
 import { removeFromStorage, removeUserFromStorage } from '../../core/utils/Storage.service'
 import NavigationService from '../../core/utils/Navigation.service'
@@ -56,7 +56,10 @@ const LoginScreen = () => {
 	return (
 		<>
 			<View style={styles.backgroundBox}>
-				<View style={styles.loginBox}>
+				<KeyboardAvoidingView
+					behavior={'padding'}
+					enabled={true}
+					style={styles.loginBox}>
 					<View style={styles.titleBox}>
 						<Text style={styles.title}>
 							Вход
@@ -70,7 +73,7 @@ const LoginScreen = () => {
 						<Input
 							style={styles.loginInput}
 							// status="control"
-							placeholder="Email"
+							placeholder ="Email"
 							keyboardType="email-address"
 							value={email}
 							onChangeText={(value: string) => setEmail(value)}
@@ -100,7 +103,7 @@ const LoginScreen = () => {
 						{/*	onPress={onPressNavigateRegister}*/}
 						{/*>Регистрация</Button>*/}
 					</View>
-				</View>
+				</KeyboardAvoidingView>
 
 				<View style={styles.socialBox}>
 					<Button

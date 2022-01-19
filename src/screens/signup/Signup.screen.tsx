@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { View } from 'react-native'
+import { KeyboardAvoidingView, View } from 'react-native'
 import { Text, Icon, Input, Button, useStyleSheet } from '@ui-kitten/components'
 import NavigationService from '../../core/utils/Navigation.service'
 import { useAppDispatch, useAppSelector } from '../../core/hooks/redux'
 import { doRegister } from '../../store/auth/ActionCreators'
-import {authActions} from '../../store/auth/AuthSlice'
+import { authActions } from '../../store/auth/AuthSlice'
 import { EMAIL_PATTERN } from '../../config'
 import themedStyles from './Signup.style'
 
@@ -35,7 +35,7 @@ const SignupScreen = () => {
 	}
 
 	const onPressRegister = () => {
-		dispatch(doRegister({name: userName, email, password}))
+		dispatch(doRegister({ name: userName, email, password }))
 	}
 
 	const onPressNavigateLogin = () => {
@@ -47,7 +47,10 @@ const SignupScreen = () => {
 	return (
 		<>
 			<View style={styles.backgroundBox}>
-				<View style={styles.signupBox}>
+				<KeyboardAvoidingView
+					behavior={'padding'}
+					enabled={true}
+					style={styles.signupBox}>
 					<View style={styles.titleBox}>
 						<Text style={styles.title}>Регистрация</Text>
 					</View>
@@ -95,7 +98,7 @@ const SignupScreen = () => {
 						{/*	onPress={onPressNavigateLogin}*/}
 						{/*>Вход</Button>*/}
 					</View>
-				</View>
+				</KeyboardAvoidingView>
 
 				<View style={styles.socialBox}>
 					<Button

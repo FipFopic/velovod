@@ -23,5 +23,7 @@ module.exports = {
 		indent: [2, 'tab'],
 		'no-tabs': 0,
 		'no-use-before-define': 0,
+		'spaced-comment': 0,
+		'no-unused-vars': 0
 	}
 }
