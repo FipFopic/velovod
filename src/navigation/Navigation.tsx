@@ -11,7 +11,7 @@ import MapScreen from '../screens/map/Map.screen'
 import ProfileScreen from '../screens/profile/Profile.screen'
 import LoginScreen from '../screens/login/Login.screen'
 import SignupScreen from '../screens/signup/Signup.screen'
-import UpdateProfileScreen from '../screens/updateProfile/UpdateProfile.screen';
+import UpdateProfileScreen from '../screens/updateProfile/UpdateProfile.screen'
 
 const getTabBarIcon =
 	(name: string, { isFocused }: { isFocused: boolean }) => (
@@ -124,7 +124,8 @@ const Navigation = () => {
 			<TabNavigation.Navigator
 				initialRouteName='RoutesStack'
 				screenOptions={({ route }) => ({
-					headerShown: false
+					headerShown: false,
+					tabBarHideOnKeyboard: true
 				})}
 			>
 				<TabNavigation.Screen
