@@ -13,7 +13,7 @@ const MapScreen = () => {
 
 				<MapView
 					style={styles.map}
-					provider={PROVIDER_DEFAULT}
+					provider={PROVIDER_GOOGLE}
 					loadingEnabled={true}
 					showsCompass={true}
 					showsUserLocation={true}
