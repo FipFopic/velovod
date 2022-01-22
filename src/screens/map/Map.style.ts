@@ -9,16 +9,16 @@ const themedStyles = StyleService.create({
 		backgroundColor: 'color-basic-100'
 	},
 	mapContainer: {
-		height: '100%',
+		height: '100%'
 	},
 	map: {
-		height: '95%'
+		height: '100%'
 	},
 	createRouteButton: {
 		width: '50%',
 		position: 'absolute',
 		bottom: 50,
-		left: '25%',
+		left: '25%'
 	},
 	bottomSheet: {
 		width: '100%',
@@ -31,7 +31,7 @@ const themedStyles = StyleService.create({
 		// backgroundColor: '#000',
 		display: 'flex',
 		flexDirection: 'row',
-		justifyContent: 'space-between',
+		justifyContent: 'space-between'
 	},
 	timer: {
 		width: '30%',
@@ -53,15 +53,15 @@ const themedStyles = StyleService.create({
 	},
 	statusBarItemTitle: {
 		fontSize: 10,
-		fontWeight: 'bold',
+		fontWeight: 'bold'
 	},
 	statusBarItemContent: {
 		fontSize: 15,
-		fontWeight: 'bold',
+		fontWeight: 'bold'
 	},
 	pointListBox: {
 		width: DEFAULT_BOX_SIZE,
-		height: '75%',
+		height: '75%'
 		// backgroundColor: 'red',
 	},
 	pointBox: {
@@ -72,7 +72,7 @@ const themedStyles = StyleService.create({
 	},
 	pointControl: {
 		display: 'flex',
-		flexDirection: 'row',
+		flexDirection: 'row'
 	},
 	controlIcon: {
 
@@ -84,8 +84,8 @@ const themedStyles = StyleService.create({
 		width: DEFAULT_BOX_SIZE,
 		display: 'flex',
 		flexDirection: 'row',
-		justifyContent: 'space-around',
-	},
+		justifyContent: 'space-around'
+	}
 })
 
 export default themedStyles
