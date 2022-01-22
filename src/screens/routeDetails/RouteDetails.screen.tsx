@@ -52,6 +52,10 @@ const RouteDetailsScreen = ({ route: navigation }: any) => {
 			if (!isAuth) {
 				return NavigationService.navigate('ProfileStack')
 			}
+
+			return NavigationService.navigate('RoutePassing', {
+				id, type, points
+			})
 		}
 
 		return (

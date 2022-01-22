@@ -39,6 +39,7 @@ export interface IMedia {
 }
 
 export interface IPoint {
+	id: string
 	duration: string
 	distance: string
 	radius: number

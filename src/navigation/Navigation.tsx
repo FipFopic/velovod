@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { Icon, useStyleSheet } from '@ui-kitten/components'
 import { navigationRef } from '../core/utils/Navigation.service'
+import RoutePassingScreen from '../screens/routePassing/RoutePassing.screen'
 import themedStyles from './Navigation.style'
 import RoutesScreen from '../screens/routes/Routes.screen'
 import RouteDetailsScreen from '../screens/routeDetails/RouteDetails.screen'
@@ -28,7 +29,8 @@ const TabNavigation = createBottomTabNavigator<TabNavigationParams>()
 
 export type RoutesStackParams = {
 	Routes: undefined,
-	RouteDetails: undefined
+	RouteDetails: undefined,
+	RoutePassing: undefined
 }
 
 const RoutesStack = createNativeStackNavigator<RoutesStackParams>()
@@ -49,6 +51,13 @@ const RoutesScreenStack = () => {
 				component={RouteDetailsScreen}
 				options={{
 					title: 'О маршруте'
+				}}
+			/>
+			<RoutesStack.Screen
+				name='RoutePassing'
+				component={RoutePassingScreen}
+				options={{
+					title: 'Прохождение маршрута'
 				}}
 			/>
 		</RoutesStack.Navigator>

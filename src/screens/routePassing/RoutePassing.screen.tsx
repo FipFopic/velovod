@@ -1,18 +1,24 @@
-import React, { FC } from 'react'
-import { View } from 'react-native'
+import React, { FC, useMemo, useRef } from 'react'
+import { ScrollView, View } from 'react-native'
 import { Button, Text, useStyleSheet } from '@ui-kitten/components'
+import BottomSheet from '@gorhom/bottom-sheet'
+import PointsPassingList
+	from '../../components/PointsPassingList/PointPassingList'
 import { IPoint, RouteType } from '../../core/interfaces/IRoute'
 import NavigationService from '../../core/utils/Navigation.service'
-import themedStyles from '../routes/Routes.style'
+import themedStyles from './RoutePassing.style'
 // import SimpleRoutePassing from './components/SimpleRoutePassing'
 
 const RoutePassingScreen: FC = ({ route: navigation }: any) => {
 	const styles = useStyleSheet(themedStyles)
 
-	const id = navigation?.state?.params?.id as number
-	const type = navigation?.state?.params?.type as RouteType
-	const points = navigation?.state?.params?.points as IPoint[]
+	const id = navigation?.params?.id as number
+	const type = navigation?.params?.type as RouteType
+	const points = navigation?.params?.points as IPoint[]
 	// const soundList = navigation?.state?.params?.soundList as Sound[]
+
+	const bottomSheetRef = useRef<BottomSheet>(null)
+	const snapPoints = useMemo(() => ['15%', '50%', '80%'], [])
 
 	if (!id || !type || points.length < 2) {
 		return (
@@ -21,18 +27,35 @@ const RoutePassingScreen: FC = ({ route: navigation }: any) => {
 					<Text>Произошла ошибка</Text>
 					<Button
 						onPress={ () => NavigationService.navigate('Routes') }
-					>Вернуться на главну</Button>
+					>Вернуться на главную</Button>
 				</View>
 			</>
 		)
 	}
 	if (type === 'route') {
 		return (
-			<Text>passing</Text>
-			// <SimpleRoutePassing
-			// 	points={points}
-			// 	soundList={soundList}
-			// />
+			<View>
+				<View style={styles.mapContainer}>
+					<BottomSheet
+						ref={bottomSheetRef}
+						index={1}
+						snapPoints={snapPoints}
+					>
+						<ScrollView>
+							{
+								points &&
+								points.map(point =>
+									<Text key={point.id + point.point.title}>point</Text>
+								)
+								// <PointsPassingList
+								// 	points={points}
+								// 	// soundList={soundList}
+								// />
+							}
+						</ScrollView>
+					</BottomSheet>
+				</View>
+			</View>
 		)
 	}
 
@@ -42,7 +65,7 @@ const RoutePassingScreen: FC = ({ route: navigation }: any) => {
 				<Text>Произошла ошибка</Text>
 				<Button
 					onPress={ () => NavigationService.navigate('Routes') }
-				>Вернуться на главну</Button>
+				>Вернуться на главную</Button>
 			</View>
 		</>
 	)
