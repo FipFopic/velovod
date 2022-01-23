@@ -13,6 +13,7 @@ import Navigation from './src/navigation/Navigation'
 import { default as theme } from './src/theme/configuredTheme.json'
 import ApplicationSetup from './src/components/ApplicationSetup/ApplicationSetup'
 import { KeyboardAvoidingView } from 'react-native'
+import 'react-native-gesture-handler'
 
 const App: FC = () => {
 	const store = setupStore()
@@ -26,7 +27,6 @@ const App: FC = () => {
 						<Navigation />
 					</SafeAreaProvider>
 				</ApplicationProvider>
-
 				<ApplicationSetup />
 			</Provider>
 		</>
