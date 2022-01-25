@@ -1,9 +1,10 @@
 import BottomSheet from '@gorhom/bottom-sheet'
 import { Button, Icon, useStyleSheet } from '@ui-kitten/components'
-import React, { useCallback, useMemo, useState, useRef } from 'react'
+import React, { useCallback, useMemo, useState, useRef, useEffect } from 'react'
 import { ScrollView, Text, View } from 'react-native'
 import MapView, { PROVIDER_DEFAULT, PROVIDER_GOOGLE } from 'react-native-maps'
 import themedStyles from './Map.style'
+import { StopWatch } from '../../core/utils/StopWatch.helper'
 
 const MapScreen = () => {
 	const styles = useStyleSheet(themedStyles)
@@ -19,24 +20,44 @@ const MapScreen = () => {
 		console.log('handleSheetChanges', index)
 	}, [])
 
+	const stopWatch = new StopWatch()
+	const [stopWatchData, setStopWatchData] = useState(stopWatch.actualValue)
+
+	//stopwatch
+	useEffect(() => {
+		stopWatch.initNewDate()
+
+		if (!isAddingRoute) {
+			setStopWatchData(stopWatch.actualValue)
+			return
+		}
+
+		const stopWatchInterval = setInterval(() => {
+			setStopWatchData(stopWatch.actualValue)
+			console.log('testDate', stopWatch.actualValue)
+		}, 1000)
+
+		return () => clearInterval(stopWatchInterval)
+	}, [isAddingRoute])
+
 	return (
 		<>
 			<View style={styles.mapContainer}>
 
-				{/*<MapView*/}
-				{/*	style={styles.map}*/}
-				{/*	provider={PROVIDER_GOOGLE}*/}
-				{/*	loadingEnabled={true}*/}
-				{/*	showsCompass={true}*/}
-				{/*	showsUserLocation={true}*/}
-				{/*	showsMyLocationButton={true}*/}
-				{/*	initialRegion={{*/}
-				{/*		latitude: 37.78825,*/}
-				{/*		longitude: -122.4324,*/}
-				{/*		latitudeDelta: 0.0922,*/}
-				{/*		longitudeDelta: 0.0421*/}
-				{/*	}}*/}
-				{/*/>*/}
+				<MapView
+					style={styles.map}
+					provider={PROVIDER_GOOGLE}
+					loadingEnabled={true}
+					showsCompass={true}
+					showsUserLocation={true}
+					showsMyLocationButton={true}
+					initialRegion={{
+						latitude: 37.78825,
+						longitude: -122.4324,
+						latitudeDelta: 0.0922,
+						longitudeDelta: 0.0421
+					}}
+				/>
 
 				{!isAddingRoute &&
 				<Button style={styles.createRouteButton} onPress={() => setIsAddingRoute(true)}>Создать маршрут</Button>
@@ -53,7 +74,7 @@ const MapScreen = () => {
 						<View style={styles.statusBar}>
 							<View style={styles.timer}>
 								<Text style={styles.statusBarItemTitle}>В ПУТИ</Text>
-								{/*<Text style={styles.statusBarItemContent}>{stopWatchData.hours}:{stopWatchData.minutes}:{stopWatchData.seconds}</Text>*/}
+								<Text style={styles.statusBarItemContent}>{stopWatchData.hours}:{stopWatchData.minutes}:{stopWatchData.seconds}</Text>
 							</View>
 							<View style={styles.distance}>
 								<Text style={styles.statusBarItemTitle}>ПРОЙДЕНО</Text>
