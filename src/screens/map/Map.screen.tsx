@@ -21,16 +21,16 @@ const MapScreen = () => {
 	}, [])
 
 	const stopWatch = new StopWatch()
-	const [stopWatchData, setStopWatchData] = useState(stopWatch.actualValue)
+	const [stopWatchData, setStopWatchData] = useState<string>('')
 
 	//stopwatch
 	useEffect(() => {
-		stopWatch.initNewDate()
-
 		if (!isAddingRoute) {
-			setStopWatchData(stopWatch.actualValue)
+			stopWatch.stop()
 			return
 		}
+
+		stopWatch.start()
 
 		const stopWatchInterval = setInterval(() => {
 			setStopWatchData(stopWatch.actualValue)
@@ -74,7 +74,7 @@ const MapScreen = () => {
 						<View style={styles.statusBar}>
 							<View style={styles.timer}>
 								<Text style={styles.statusBarItemTitle}>В ПУТИ</Text>
-								<Text style={styles.statusBarItemContent}>{stopWatchData.hours}:{stopWatchData.minutes}:{stopWatchData.seconds}</Text>
+								<Text style={styles.statusBarItemContent}>{stopWatchData}</Text>
 							</View>
 							<View style={styles.distance}>
 								<Text style={styles.statusBarItemTitle}>ПРОЙДЕНО</Text>
