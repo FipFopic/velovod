@@ -38,7 +38,7 @@ const RouteDetailsScreen = ({ route: navigation }: any) => {
 	const { isAuth } = useAppSelector(state => state.auth)
 
 	if (type === 'route') {
-		const { data: route, isLoading, error } = routeAPI.useGetRouteQuery(id)
+		const { data: route, isLoading, error } = routeAPI.useGetRouteQuery(id, { skip: !isAuth })
 
 		const [points, setPoints] = useState<IPoint[]>([])
 
