@@ -16,6 +16,7 @@ target 'velovod' do
 	rn_maps_path = '../node_modules/react-native-maps'
 	pod 'react-native-google-maps', :path => rn_maps_path
 
+
   pod 'RNGestureHandler', :path => '../node_modules/react-native-gesture-handler'
 
   target 'velovodTests' do

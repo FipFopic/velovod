@@ -1,12 +1,18 @@
-import React, { FC, useEffect, useMemo, useState } from 'react'
-import { View } from 'react-native'
-import { useStyleSheet } from '@ui-kitten/components'
+import BottomSheet from '@gorhom/bottom-sheet'
+import React, { FC, useEffect, useMemo, useRef, useState } from 'react'
+import { ScrollView, View } from 'react-native'
+import { Text, useStyleSheet } from '@ui-kitten/components'
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps'
+import MapViewDirections from 'react-native-maps-directions'
+import PointsPassingList
+	from '../../../components/PointsPassingList/PointPassingList'
+import { KEYS } from '../../../config'
 import { ICoords, IPoint } from '../../../core/interfaces/IRoute'
 import { userAPI } from '../../../services/user/UserService'
 import {
 	getPointsCoords,
 	getPointsToPass,
-	PointPass,
+	PointPass
 } from '../RoutePassing.helper'
 import themedStyles from '../RoutePassing.style'
 
@@ -21,22 +27,81 @@ const SimpleRoutePassing: FC<SimpleRoutePassingProps> = ({ points }) => {
 	const POINTS_TO_PASS = useMemo(() => getPointsToPass(points), [])
 	const POINTS_COORDS = useMemo(() => getPointsCoords(POINTS_TO_PASS), [])
 
-	const [getProfile, { data: user }] = userAPI.useGetProfileMutation()
+	const { data: user } = userAPI.useGetProfileQuery()
 
 	const [currentLocation, setLocation] = useState<ICoords | null>(null)
 	const [pointList, setPointList] = useState<PointPass[]>(POINTS_TO_PASS)
 	const [nextPoint, setNextPoint] = useState<PointPass>(POINTS_TO_PASS[0])
 	const [isEnd, setEnd] = useState(false)
+	const [mapEventService, setMapEventService] = useState<any>()
 
+	const bottomSheetRef = useRef<BottomSheet>(null)
+	const snapPoints = useMemo(() => ['5%', '50%', '100%'], [])
 
-
-	useEffect(() => {
-		getProfile()
-	}, [])
+	const initialRegion = {
+		latitude: +pointList[0].data.point.latitude,
+		longitude: +pointList[0].data.point.longitude,
+		latitudeDelta: 0.0922,
+		longitudeDelta: 0.0421
+	}
 
 	return (
-			<>
-			</>
+		<>
+			<View>
+				<View style={styles.mapContainer}>
+					<MapView
+						style={styles.map}
+						provider={PROVIDER_GOOGLE}
+						initialRegion={initialRegion}
+						zoomEnabled={true}
+						showsUserLocation={true}
+						showsMyLocationButton={true}
+						// onUserLocationChange={onUserLocationChange}
+						ref={setMapEventService}
+						// onRegionChange={onRegionChangeComplete}
+					>
+						{
+							pointList &&
+							pointList.map(point =>
+								<Marker
+									key={point.index}
+									coordinate={{
+										latitude: +point.data.point.latitude,
+										longitude: +point.data.point.longitude
+									}}
+									title={point.data.point.title}
+									description={point.data.point.description}
+								/>
+							)
+						}
+
+						<MapViewDirections
+							apikey={KEYS.GOOGLE.key}
+							optimizeWaypoints={false}
+							origin={POINTS_COORDS[0]}
+							waypoints={ POINTS_COORDS.length > 2 ? POINTS_COORDS.slice(1, -1) : undefined }
+							mode={'WALKING'}
+							precision={'high'}
+							destination={ POINTS_COORDS[POINTS_COORDS.length - 1] }
+							strokeWidth={4}
+							strokeColor="red"
+						/>
+
+					</MapView>
+				</View>
+				<BottomSheet
+					ref={bottomSheetRef}
+					index={1}
+					snapPoints={snapPoints}
+				>
+					<ScrollView>
+						<PointsPassingList
+							points={pointList}
+						/>
+					</ScrollView>
+				</BottomSheet>
+			</View>
+		</>
 	)
 }
 

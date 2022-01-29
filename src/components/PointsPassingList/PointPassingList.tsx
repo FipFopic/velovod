@@ -1,9 +1,9 @@
 import React, { FC, useState } from 'react'
 import { Text, View } from 'react-native'
 import { PointPass } from '../../screens/routePassing/RoutePassing.helper'
-import Point from '../Point/Point'
 import { Icon, useStyleSheet } from '@ui-kitten/components'
 import { getImageSrc, getAudioSrc } from '../../core/utils/Main.helper'
+import Point from '../Point/Point'
 import themedStyles from './PointPassingList.style'
 // import Sound from 'react-native-sound'
 
@@ -44,28 +44,28 @@ const PointsPassingList: FC<PointsPassingListProps> = ({ points }) => {
 			{
 				points &&
         points.map(pointInfo =>
-        	<Point
-        		key={pointInfo.index}
-        		style={{ opacity: pointInfo.isPassed ? 1 : 0.3 }}
+					<Point
+						key={pointInfo.index}
+						style={{ opacity: pointInfo.isPassed ? 1 : 0.3 }}
         		title={ pointInfo.data.point.title }
-        		photo={ getImageSrc(pointInfo.data.point.media[1].id, 100) }
+						photo={ getImageSrc(pointInfo.data.point.media[1].id, 100) }
 					>
-        		{
-        			// !soundList || soundList[pointInfo.index] &&
-              // <Icon
-              // 	style={styles.playIcon}
-              // 	width={40}
-              // 	height={40}
-              // 	fill={'#ecf0f1'}
-              // 	name={
-              // 		actualAudioIndex === pointInfo.index
-              // 			? 'pause-circle-outline'
-              // 			: 'play-circle-outline'
-              // 	}
-              // 	onPress={ () => pointInfo.isPassed && _playAudio(pointInfo.index) }
-              // />
-        		}
-        	</Point>
+						{
+							// !soundList || soundList[pointInfo.index] &&
+							// <Icon
+							// 	style={styles.playIcon}
+							// 	width={40}
+							// 	height={40}
+							// 	fill={'#ecf0f1'}
+							// 	name={
+							// 		actualAudioIndex === pointInfo.index
+							// 			? 'pause-circle-outline'
+							// 			: 'play-circle-outline'
+							// 	}
+							// 	onPress={ () => pointInfo.isPassed && _playAudio(pointInfo.index) }
+							// />
+						}
+					</Point>
         )
 			}
 		</View>
