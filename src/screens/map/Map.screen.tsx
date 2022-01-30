@@ -11,7 +11,7 @@ const MapScreen = ({ navigation }: any) => {
 
 	const [isAddingRoute, setIsAddingRoute] = useState(false)
 
-	const sheetPositions = ['15%', '75%', '100%']
+	const sheetPositions = ['14%', '50%', '90%']
 	const [snapPos, setSnapPos] = useState<number>(1)
 
 	const bottomSheetRef = useRef<BottomSheet>(null)
