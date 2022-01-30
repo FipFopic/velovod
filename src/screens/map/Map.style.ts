@@ -84,7 +84,8 @@ const themedStyles = StyleService.create({
 		width: DEFAULT_BOX_SIZE,
 		display: 'flex',
 		flexDirection: 'row',
-		justifyContent: 'space-around'
+		justifyContent: 'space-around',
+		marginTop: '10%'
 	}
 })
 

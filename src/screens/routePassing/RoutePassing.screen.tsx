@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useMemo, useRef } from 'react'
-import { ScrollView, View } from 'react-native'
+import { ScrollView, View, Alert, BackHandler } from 'react-native'
 import { Button, Text, useStyleSheet } from '@ui-kitten/components'
 import BottomSheet from '@gorhom/bottom-sheet'
 import PointsPassingList
@@ -20,14 +20,48 @@ const RoutePassingScreen: FC = ({ route: routeNavigation, navigation }: any) => 
 
 	const onPressBack = () => {
 		console.log('CLICK BACKCKCK')
-		navigation.goBack()
+		Alert.alert(
+			'Завершить маршрут?',
+			'Весь прогресс будет утерян!',
+			[
+				{
+					text: 'Покинуть',
+					style: 'destructive',
+					onPress: navigation.goBack
+				},
+				{
+					text: 'Отмена'
+				}
+			]
+		)
+		return false
 	}
+
+	// function handleBackButtonClick() {
+	// 	navigation.goBack();
+	// 	return true;
+	// }
 
 	useEffect(() => {
 		navigation.setOptions({
-			headerLeft: () => <Button onPress={onPressBack}>Test back</Button>
+			headerShown: false
+		})
+
+		navigation.getParent()?.setOptions({
+			tabBarStyle: { display: 'none' }
+		})
+
+		return () => navigation.getParent()?.setOptions({
+			tabBarStyle: undefined
 		})
 	}, [navigation])
+
+	useEffect(() => {
+		BackHandler.addEventListener('hardwareBackPress', onPressBack)
+		return () => {
+			BackHandler.removeEventListener('hardwareBackPress', onPressBack)
+		}
+	}, [])
 
 	if (!id || !type || points.length < 2) {
 		return (

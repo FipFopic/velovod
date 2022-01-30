@@ -1,27 +1,42 @@
 import BottomSheet from '@gorhom/bottom-sheet'
 import { Button, Icon, useStyleSheet } from '@ui-kitten/components'
 import React, { useCallback, useMemo, useState, useRef, useEffect } from 'react'
-import { ScrollView, Text, View } from 'react-native'
+import { Alert, BackHandler, ScrollView, Text, View } from 'react-native'
 import MapView, { PROVIDER_DEFAULT, PROVIDER_GOOGLE } from 'react-native-maps'
 import themedStyles from './Map.style'
 import { StopWatch } from '../../core/utils/StopWatch.helper'
 
-const MapScreen = () => {
+const MapScreen = ({ navigation }: any) => {
 	const styles = useStyleSheet(themedStyles)
 
 	const [isAddingRoute, setIsAddingRoute] = useState(false)
 
-	const sheetPositions = ['15%', '50%', '80%']
+	const sheetPositions = ['15%', '75%', '100%']
 	const [snapPos, setSnapPos] = useState<number>(1)
 
 	const bottomSheetRef = useRef<BottomSheet>(null)
 	const snapPoints = useMemo(() => sheetPositions, [])
-	const handleSheetChanges = useCallback((index: number) => {
-		console.log('handleSheetChanges', index)
-	}, [])
 
 	const stopWatch = new StopWatch()
 	const [stopWatchData, setStopWatchData] = useState<string>('')
+
+	const onPressBack = () => {
+		Alert.alert(
+			'Завершить добавление маршрута?',
+			'Весь прогресс будет утерян!',
+			[
+				{
+					text: 'Покинуть',
+					style: 'destructive',
+					onPress: navigation.goBack
+				},
+				{
+					text: 'Отмена'
+				}
+			]
+		)
+		return false
+	}
 
 	//stopwatch
 	useEffect(() => {
@@ -39,6 +54,29 @@ const MapScreen = () => {
 
 		return () => clearInterval(stopWatchInterval)
 	}, [isAddingRoute])
+
+	useEffect(() => {
+		navigation?.setOptions({
+			headerShown: !isAddingRoute
+		})
+
+		navigation.getParent()?.setOptions({
+			tabBarStyle: {
+				display: isAddingRoute ? 'none' : 'flex'
+			}
+		})
+
+		return () => navigation.getParent()?.setOptions({
+			tabBarStyle: undefined
+		})
+	}, [navigation, isAddingRoute])
+
+	useEffect(() => {
+		BackHandler.addEventListener('hardwareBackPress', onPressBack)
+		return () => {
+			BackHandler.removeEventListener('hardwareBackPress', onPressBack)
+		}
+	}, [])
 
 	return (
 		<>
@@ -68,7 +106,6 @@ const MapScreen = () => {
 					ref={bottomSheetRef}
 					index={snapPos}
 					snapPoints={snapPoints}
-					onChange={handleSheetChanges}
 				>
 					<View style={styles.bottomSheet}>
 						<View style={styles.statusBar}>

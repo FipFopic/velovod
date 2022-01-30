@@ -76,6 +76,9 @@ const MapScreenStack = () => {
 			<MapStack.Screen
 				name='Map'
 				component={MapScreen}
+				options={{
+					title: 'Создание маршрута'
+				}}
 			/>
 		</MapStack.Navigator>
 	)
