@@ -36,7 +36,7 @@ const SimpleRoutePassing: FC<SimpleRoutePassingProps> = ({ points }) => {
 	const [mapEventService, setMapEventService] = useState<any>()
 
 	const bottomSheetRef = useRef<BottomSheet>(null)
-	const snapPoints = useMemo(() => ['5%', '50%', '100%'], [])
+	const snapPoints = useMemo(() => ['5%', '50%', '90%'], [])
 
 	const initialRegion = {
 		latitude: +pointList[0].data.point.latitude,

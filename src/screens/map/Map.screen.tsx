@@ -12,7 +12,6 @@ const MapScreen = ({ navigation }: any) => {
 	const [isAddingRoute, setIsAddingRoute] = useState(false)
 
 	const sheetPositions = ['14%', '50%', '90%']
-	const [snapPos, setSnapPos] = useState<number>(1)
 
 	const bottomSheetRef = useRef<BottomSheet>(null)
 	const snapPoints = useMemo(() => sheetPositions, [])
