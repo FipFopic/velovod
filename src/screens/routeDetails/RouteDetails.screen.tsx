@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Image, ScrollView, View } from 'react-native'
 import {
 	Button,
@@ -19,6 +19,10 @@ import PointsList from '../../components/PointsList/PointsList'
 import OwnerInfo from '../../components/OwnerInfo/OwnerInfo'
 import { getQuestRouteType } from './RouteDetails.helper'
 import themedStyles from './RouteDetails.style'
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps'
+import MapViewDirections from 'react-native-maps-directions'
+import { KEYS } from '../../config'
+import { getPointsCoords, getPointsToPass, PointPass } from '../routePassing/RoutePassing.helper'
 
 const RouteDetailsScreen = ({ route: navigation }: any) => {
 	const styles = useStyleSheet(themedStyles)
@@ -41,10 +45,29 @@ const RouteDetailsScreen = ({ route: navigation }: any) => {
 		const { data: route, isLoading, error } = routeAPI.useGetRouteQuery(id, { skip: !isAuth })
 
 		const [points, setPoints] = useState<IPoint[]>([])
+		const [tabIndex, setTabIndex] = useState(0)
+		const [initialRegion, setInitialRegion] = useState({})
+
+		const POINTS_COORDS = points.map((point) => {
+			return {
+				latitude: +point.point.latitude,
+				longitude: +point.point.longitude
+			}
+		})
+
+		console.log(typeof points[1], 'points[0]')
+
+		// const initialRegion =
 
 		useEffect(() => {
 			if (route?.points) {
 				setPoints(route.points)
+				setInitialRegion({
+					latitude: points[0] ? +(points[0].point.latitude) : 0.3,
+					longitude: points[0] ? +(points[0]?.point.longitude) : 0.3,
+					latitudeDelta: 0.0922,
+					longitudeDelta: 0.0421
+				})
 			}
 		}, [route])
 
@@ -108,8 +131,8 @@ const RouteDetailsScreen = ({ route: navigation }: any) => {
 							<TabBar
 								style={styles.tabBar}
 								indicatorStyle={styles.tabIndicator}
-								// selectedIndex={tabIndex}
-								// onSelect={setTabIndex}>
+								selectedIndex={tabIndex}
+								onSelect={setTabIndex}
 								// customize tab https://github.com/akveo/react-native-ui-kitten/issues/1079
 							>
 								{/*<Tab*/}
@@ -129,8 +152,8 @@ const RouteDetailsScreen = ({ route: navigation }: any) => {
 
 						<ViewPager
 							style={styles.roadInfo}
-							// selectedIndex={tabIndex}
-							// onSelect={setTabIndex}
+							selectedIndex={tabIndex}
+							onSelect={setTabIndex}
 						>
 							<View style={styles.infoSlide}>
 								<ScrollView
@@ -145,6 +168,46 @@ const RouteDetailsScreen = ({ route: navigation }: any) => {
 
 							<View style={styles.infoSlide}>
 								<View style={styles.slideContainer}>
+									{!isLoading && points.length &&
+									<MapView
+										style={{ height: 500, width: '100%' }}
+										provider={PROVIDER_GOOGLE}
+										region={initialRegion}
+										zoomEnabled={true}
+										showsUserLocation={true}
+										showsMyLocationButton={true}
+										// onUserLocationChange={onUserLocationChange}
+										// ref={setMapEventService}
+										// onRegionChange={onRegionChangeComplete}
+									>
+										{
+											points &&
+											points.map((point, index) =>
+												<Marker
+													key={index}
+													coordinate={{
+														latitude: +point.point.latitude,
+														longitude: +point.point.longitude
+													}}
+													title={point.point.title}
+													description={point.point.description}
+												/>
+											)
+										}
+
+										<MapViewDirections
+											apikey={KEYS.GOOGLE.key}
+											optimizeWaypoints={false}
+											origin={POINTS_COORDS[0]}
+											waypoints={ POINTS_COORDS.length > 2 ? POINTS_COORDS.slice(1, -1) : undefined }
+											mode={'WALKING'}
+											precision={'high'}
+											destination={ POINTS_COORDS[POINTS_COORDS.length - 1] }
+											strokeWidth={4}
+											strokeColor="red"
+										/>
+									</MapView>
+									}
 									{/*<MapView*/}
 									{/*  style={{height: 400, borderRadius: 34}}*/}
 									{/*  mapType={'standard'}*/}

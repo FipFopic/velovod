@@ -381,7 +381,7 @@ PODS:
     - React-jsi (= 0.66.4)
     - React-logger (= 0.66.4)
     - React-perflogger (= 0.66.4)
-  - RNCAsyncStorage (1.15.15):
+  - RNCAsyncStorage (1.15.17):
     - React-Core
   - RNFastImage (8.5.11):
     - React-Core
@@ -417,7 +417,7 @@ PODS:
     - React-RCTText
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNScreens (3.10.1):
+  - RNScreens (3.10.2):
     - React-Core
     - React-RCTImage
   - RNSVG (9.13.6):
@@ -639,8 +639,8 @@ SPEC CHECKSUMS:
   React-logger: 933f80c97c633ee8965d609876848148e3fef438
   react-native-google-maps: 17432eb7412df3c65d7c7c52ede085d0f5624f77
   react-native-maps: d752b0dd0e1951d815b1336332835aab6b4a836f
-  react-native-safe-area-context: 5cf05f49df9d17261e40e518481f2e334c6cd4b5
-  react-native-vkontakte-login: 73e0f27047f078d531dcb3fdb11ea0f7effde288
+  react-native-safe-area-context: 584dc04881deb49474363f3be89e4ca0e854c057
+  react-native-vkontakte-login: d5f2e9624b531f7aa3f8c178b2f273715a8b142e
   React-perflogger: 93075d8931c32cd1fce8a98c15d2d5ccc4d891bd
   React-RCTActionSheet: 7d3041e6761b4f3044a37079ddcb156575fb6d89
   React-RCTAnimation: 743e88b55ac62511ae5c2e22803d4f503f2a3a13
@@ -653,11 +653,11 @@ SPEC CHECKSUMS:
   React-RCTVibration: e3ffca672dd3772536cb844274094b0e2c31b187
   React-runtimeexecutor: dec32ee6f2e2a26e13e58152271535fadff5455a
   ReactCommon: 57b69f6383eafcbd7da625bfa6003810332313c4
-  RNCAsyncStorage: 69b1e4d51107f5f0847d086c23513465869d046e
+  RNCAsyncStorage: 6bd5a7ba3dde1c3facba418aa273f449bdc5437a
   RNFastImage: 1f2cab428712a4baaf78d6169eaec7f622556dd7
   RNGestureHandler: e1ad51d31a580755079d5124d3ab66f0fcaa8311
   RNReanimated: da3860204e5660c0dd66739936732197d359d753
-  RNScreens: 522705f2e5c9d27efb17f24aceb2bf8335bc7b8e
+  RNScreens: d6da2b9e29cf523832c2542f47bf1287318b1868
   RNSVG: 8ba35cbeb385a52fd960fd28db9d7d18b4c2974f
   SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
   SDWebImageWebPCoder: f93010f3f6c031e2f8fb3081ca4ee6966c539815
@@ -665,6 +665,6 @@ SPEC CHECKSUMS:
   Yoga: e7dc4e71caba6472ff48ad7d234389b91dadc280
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: c582ffa6ebe1f402d9a20c30c89ca3f975af5b1f
+PODFILE CHECKSUM: f456474db4cf65ce57a38d4300adb4e4ca3ef630
 
 COCOAPODS: 1.11.2

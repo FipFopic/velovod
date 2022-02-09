@@ -103,7 +103,7 @@ const MapScreen = ({ navigation }: any) => {
 				{ isAddingRoute &&
 				<BottomSheet
 					ref={bottomSheetRef}
-					index={snapPos}
+					// index={snapPos}
 					snapPoints={snapPoints}
 				>
 					<View style={styles.bottomSheet}>
