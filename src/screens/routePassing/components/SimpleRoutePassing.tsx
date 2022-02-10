@@ -1,7 +1,7 @@
 import BottomSheet from '@gorhom/bottom-sheet'
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react'
-import { ScrollView, View } from 'react-native'
-import { Text, useStyleSheet } from '@ui-kitten/components'
+import { Alert, ScrollView, View } from 'react-native'
+import { Button, Text, useStyleSheet } from '@ui-kitten/components'
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps'
 import MapViewDirections from 'react-native-maps-directions'
 import PointsPassingList
@@ -18,10 +18,11 @@ import themedStyles from '../RoutePassing.style'
 
 interface SimpleRoutePassingProps {
 	points: IPoint[]
+	navigation: any
 	// soundList: Sound[]
 }
 
-const SimpleRoutePassing: FC<SimpleRoutePassingProps> = ({ points }) => {
+const SimpleRoutePassing: FC<SimpleRoutePassingProps> = ({ points, navigation }) => {
 	const styles = useStyleSheet(themedStyles)
 
 	const POINTS_TO_PASS = useMemo(() => getPointsToPass(points), [])
@@ -43,6 +44,24 @@ const SimpleRoutePassing: FC<SimpleRoutePassingProps> = ({ points }) => {
 		longitude: +pointList[0].data.point.longitude,
 		latitudeDelta: 0.0922,
 		longitudeDelta: 0.0421
+	}
+
+	const onPressBack = () => {
+		Alert.alert(
+			'Завершить маршрут?',
+			'Весь прогресс будет утерян!',
+			[
+				{
+					text: 'Покинуть',
+					style: 'destructive',
+					onPress: navigation.goBack
+				},
+				{
+					text: 'Отмена'
+				}
+			]
+		)
+		return false
 	}
 
 	return (
@@ -94,6 +113,7 @@ const SimpleRoutePassing: FC<SimpleRoutePassingProps> = ({ points }) => {
 					index={1}
 					snapPoints={snapPoints}
 				>
+					<Button onPress={onPressBack}>Завершить</Button>
 					<ScrollView>
 						<PointsPassingList
 							points={pointList}

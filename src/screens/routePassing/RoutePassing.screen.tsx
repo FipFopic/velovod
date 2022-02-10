@@ -19,7 +19,6 @@ const RoutePassingScreen: FC = ({ route: routeNavigation, navigation }: any) => 
 	// const soundList = navigation?.state?.params?.soundList as Sound[]
 
 	const onPressBack = () => {
-		console.log('CLICK BACKCKCK')
 		Alert.alert(
 			'Завершить маршрут?',
 			'Весь прогресс будет утерян!',
@@ -79,6 +78,7 @@ const RoutePassingScreen: FC = ({ route: routeNavigation, navigation }: any) => 
 		return (
 			<SimpleRoutePassing
 				points={points}
+				navigation={navigation}
 			/>
 		)
 	}
