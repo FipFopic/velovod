@@ -2,7 +2,7 @@ import BottomSheet from '@gorhom/bottom-sheet'
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react'
 import { Alert, ScrollView, View } from 'react-native'
 import { Button, Text, useStyleSheet } from '@ui-kitten/components'
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps'
+import MapView, { EventUserLocation, Marker, PROVIDER_GOOGLE } from 'react-native-maps'
 import MapViewDirections from 'react-native-maps-directions'
 import PointsPassingList
 	from '../../../components/PointsPassingList/PointPassingList'
@@ -12,6 +12,7 @@ import { userAPI } from '../../../services/user/UserService'
 import {
 	getPointsCoords,
 	getPointsToPass,
+	isPointRadius,
 	PointPass
 } from '../RoutePassing.helper'
 import themedStyles from '../RoutePassing.style'
@@ -46,6 +47,10 @@ const SimpleRoutePassing: FC<SimpleRoutePassingProps> = ({ points, navigation })
 		longitudeDelta: 0.0421
 	}
 
+	const pointPassed = (idx: number) => {
+		pointList[idx] = { ...pointList[idx], isPassed: true }
+	}
+
 	const onPressBack = () => {
 		Alert.alert(
 			'Завершить маршрут?',
@@ -64,6 +69,29 @@ const SimpleRoutePassing: FC<SimpleRoutePassingProps> = ({ points, navigation })
 		return false
 	}
 
+	const onUserLocationChange = (e: EventUserLocation) => {
+		setLocation(e.nativeEvent.coordinate)
+	}
+
+	useEffect(() => {
+		if (!currentLocation) {
+			return
+		}
+
+		const radius = nextPoint.data.radius
+		const pointCoords: ICoords = {
+			latitude: +(nextPoint.data.point.latitude),
+			longitude: +(nextPoint.data.point.longitude)
+		}
+
+		if (!isPointRadius(currentLocation, pointCoords, radius)) {
+			return
+		}
+
+		pointPassed(nextPoint.index)
+		setNextPoint(pointList[nextPoint.index + 1])
+	}, [currentLocation])
+
 	return (
 		<>
 			<View>
@@ -75,7 +103,7 @@ const SimpleRoutePassing: FC<SimpleRoutePassingProps> = ({ points, navigation })
 						zoomEnabled={true}
 						showsUserLocation={true}
 						showsMyLocationButton={true}
-						// onUserLocationChange={onUserLocationChange}
+						onUserLocationChange={onUserLocationChange}
 						ref={setMapEventService}
 						// onRegionChange={onRegionChangeComplete}
 					>

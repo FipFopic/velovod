@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { Text, View } from 'react-native'
 import { PointPass } from '../../screens/routePassing/RoutePassing.helper'
 import { Icon, useStyleSheet } from '@ui-kitten/components'
@@ -39,6 +39,11 @@ const PointsPassingList: FC<PointsPassingListProps> = ({ points }) => {
 		setActualAudioIndex(-1)
 	}
 
+	useEffect(() => {
+		console.log('____pointInfo.isPassed', points[0].isPassed)
+	}, [])
+
+
 	return (
 		<View>
 			{
@@ -46,7 +51,7 @@ const PointsPassingList: FC<PointsPassingListProps> = ({ points }) => {
         points.map(pointInfo =>
 					<Point
 						key={pointInfo.index}
-						style={{ opacity: pointInfo.isPassed ? 1 : 0.3 }}
+						style={{ opacity: pointInfo.isPassed ? 0.3 : 1 }}
         		title={ pointInfo.data.point.title }
 						photo={ getImageSrc(pointInfo.data.point.media[1].id, 100) }
 					>
