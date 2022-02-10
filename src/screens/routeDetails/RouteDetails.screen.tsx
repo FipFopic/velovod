@@ -47,6 +47,7 @@ const RouteDetailsScreen = ({ route: navigation }: any) => {
 		const [points, setPoints] = useState<IPoint[]>([])
 		const [tabIndex, setTabIndex] = useState(0)
 		const [initialRegion, setInitialRegion] = useState({})
+		const [mapEventService, setMapEventService] = useState<any>()
 
 		const POINTS_COORDS = points.map((point) => {
 			return {
@@ -55,21 +56,20 @@ const RouteDetailsScreen = ({ route: navigation }: any) => {
 			}
 		})
 
-		console.log(typeof points[1], 'points[0]')
-
-		// const initialRegion =
-
 		useEffect(() => {
 			if (route?.points) {
 				setPoints(route.points)
-				setInitialRegion({
-					latitude: points[0] ? +(points[0].point.latitude) : 0.3,
-					longitude: points[0] ? +(points[0]?.point.longitude) : 0.3,
-					latitudeDelta: 0.0922,
-					longitudeDelta: 0.0421
-				})
 			}
 		}, [route])
+
+		useEffect(() => {
+			setInitialRegion({
+				latitude: points[0] ? +(points[0].point.latitude) : 0.3,
+				longitude: points[0] ? +(points[0]?.point.longitude) : 0.3,
+				latitudeDelta: 0.0922,
+				longitudeDelta: 0.0421
+			})
+		}, [points])
 
 		const onPressStartRoute = () => {
 			if (!isAuth) {
@@ -168,16 +168,16 @@ const RouteDetailsScreen = ({ route: navigation }: any) => {
 
 							<View style={styles.infoSlide}>
 								<View style={styles.slideContainer}>
-									{!isLoading && points.length &&
+									{!isLoading && !error && points.length > 0 &&
 									<MapView
-										style={{ height: 500, width: '100%' }}
+										style={{ height: '100%', width: '100%' }}
 										provider={PROVIDER_GOOGLE}
 										region={initialRegion}
 										zoomEnabled={true}
 										showsUserLocation={true}
 										showsMyLocationButton={true}
+										ref={setMapEventService}
 										// onUserLocationChange={onUserLocationChange}
-										// ref={setMapEventService}
 										// onRegionChange={onRegionChangeComplete}
 									>
 										{
@@ -208,6 +208,7 @@ const RouteDetailsScreen = ({ route: navigation }: any) => {
 										/>
 									</MapView>
 									}
+
 									{/*<MapView*/}
 									{/*  style={{height: 400, borderRadius: 34}}*/}
 									{/*  mapType={'standard'}*/}
