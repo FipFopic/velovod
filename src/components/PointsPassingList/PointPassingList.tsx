@@ -18,8 +18,6 @@ const PointsPassingList: FC<PointsPassingListProps> = ({ points }) => {
 	const [isAudioPlaying, setAudioPlaying] = useState(false)
 	const [actualAudioIndex, setActualAudioIndex] = useState(-1)
 
-	// console.log('points', points[0].data.point.media)
-
 	const _playAudio = (index: number) => {
 		if (isAudioPlaying && actualAudioIndex !== index) {
 			// soundList[actualAudioIndex].pause()
@@ -38,11 +36,6 @@ const PointsPassingList: FC<PointsPassingListProps> = ({ points }) => {
 		setAudioPlaying(false)
 		setActualAudioIndex(-1)
 	}
-
-	useEffect(() => {
-		console.log('____pointInfo.isPassed', points[0].isPassed)
-	}, [])
-
 
 	return (
 		<View>
