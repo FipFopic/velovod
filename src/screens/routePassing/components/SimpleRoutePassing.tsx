@@ -1,7 +1,7 @@
 import BottomSheet from '@gorhom/bottom-sheet'
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react'
 import { Alert, ScrollView, View } from 'react-native'
-import { Button, Text, useStyleSheet } from '@ui-kitten/components'
+import {Button, Icon, Text, useStyleSheet} from '@ui-kitten/components'
 import MapView, { EventUserLocation, Marker, PROVIDER_GOOGLE } from 'react-native-maps'
 import MapViewDirections from 'react-native-maps-directions'
 import PointsPassingList
@@ -141,11 +141,11 @@ const SimpleRoutePassing: FC<SimpleRoutePassingProps> = ({ points, navigation })
 					index={1}
 					snapPoints={snapPoints}
 				>
-					<Button
-						style={{ width: '30%', alignSelf: 'flex-end' }}
-						onPress={onPressBack}
-						size={'small'}
-					>Завершить</Button>
+					<Icon
+						style={styles.exitButton}
+						fill='#000'
+						name='close-outline'
+						onPress={onPressBack}/>
 					<ScrollView>
 						<PointsPassingList
 							points={pointList}

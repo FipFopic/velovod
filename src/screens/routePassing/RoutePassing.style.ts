@@ -10,6 +10,12 @@ const themedStyles = StyleService.create({
 	},
 	map: {
 		height: '95%'
+	},
+	exitButton: {
+		width: 20,
+		height: 20,
+		marginRight: 20,
+		alignSelf: 'flex-end'
 	}
 })
 

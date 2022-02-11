@@ -51,7 +51,7 @@ const PointsPassingList: FC<PointsPassingListProps> = ({ points }) => {
         points.map(pointInfo =>
 					<Point
 						key={pointInfo.index}
-						style={{ opacity: pointInfo.isPassed ? 0.3 : 1 }}
+						style={{ opacity: pointInfo.isPassed ? 1 : 0.5 }}
         		title={ pointInfo.data.point.title }
 						photo={ getImageSrc(pointInfo.data.point.media[1].id, 100) }
 					>
