@@ -141,7 +141,11 @@ const SimpleRoutePassing: FC<SimpleRoutePassingProps> = ({ points, navigation })
 					index={1}
 					snapPoints={snapPoints}
 				>
-					<Button onPress={onPressBack}>Завершить</Button>
+					<Button
+						style={{ width: '30%', alignSelf: 'flex-end' }}
+						onPress={onPressBack}
+						size={'small'}
+					>Завершить</Button>
 					<ScrollView>
 						<PointsPassingList
 							points={pointList}
