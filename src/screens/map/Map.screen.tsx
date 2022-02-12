@@ -5,11 +5,14 @@ import { Alert, BackHandler, ScrollView, Text, View } from 'react-native'
 import MapView, { PROVIDER_DEFAULT, PROVIDER_GOOGLE } from 'react-native-maps'
 import themedStyles from './Map.style'
 import { StopWatch } from '../../core/utils/StopWatch.helper'
+import Point from '../../../src/components/Point/Point'
+import { getImageSrc } from '../../../src/core/utils/Main.helper'
 
 const MapScreen = ({ navigation }: any) => {
 	const styles = useStyleSheet(themedStyles)
 
 	const [isAddingRoute, setIsAddingRoute] = useState(false)
+	const [newPoints, setNewPoints] = useState<Array<any>>([{}])
 
 	const sheetPositions = ['14%', '50%', '90%']
 
@@ -122,27 +125,35 @@ const MapScreen = ({ navigation }: any) => {
 							</View>
 						</View>
 
-						{/*<ScrollView style={styles.pointListBox}>*/}
-						{/*	/!*{ pointList &&*!/*/}
-						{/*	/!*<PointsPassingList points={pointList} soundList={soundList}/>*!/*/}
-						{/*	/!*}*!/*/}
-						{/*	<View style={styles.pointBox}>*/}
-						{/*		/!*<Point title={'title'} photo={getImageSrc(1, 100)} style={{opacity: 1}}/>*!/*/}
-						{/*		<View style={styles.pointControl}>*/}
-						{/*			<Icon*/}
-						{/*				style={{ width: 20, height: 20 }}*/}
-						{/*				fill='#000'*/}
-						{/*				name='edit-outline'/>*/}
-						{/*			<Icon*/}
-						{/*				style={{ width: 20, height: 20 }}*/}
-						{/*				fill='#000'*/}
-						{/*				name='close-outline'/>*/}
-						{/*		</View>*/}
-						{/*	</View>*/}
-						{/*</ScrollView>*/}
+						<ScrollView style={styles.pointListBox}>
+							{/*{ pointList &&*/}
+							{/*<PointsPassingList points={pointList} soundList={soundList}/>*/}
+							{/*}*/}
+							{
+								newPoints && newPoints.map((point, index) =>
+									<View
+										key={index}
+										style={styles.pointBox}
+									>
+										<Point title={'title'} photo={getImageSrc(1, 100)} style={{ opacity: 1 }}/>
+										<View style={styles.pointControl}>
+											<Icon
+												style={{ width: 20, height: 20 }}
+												fill='#000'
+												name='edit-outline'/>
+											<Icon
+												style={{ width: 20, height: 20 }}
+												fill='#000'
+												name='close-outline'/>
+										</View>
+									</View>
+								)
+							}
+						</ScrollView>
 						<View style={styles.sheetButtonGroup}>
 							<Button
 								style={styles.addPointButton}
+								onPress={() => setNewPoints([{}, {}])}
 							>
 								Добавить точку
 							</Button>
