@@ -16,20 +16,24 @@ import {
 	PointPass
 } from '../RoutePassing.helper'
 import themedStyles from '../RoutePassing.style'
+import Sound from 'react-native-sound'
 
 interface SimpleRoutePassingProps {
 	points: IPoint[]
 	navigation: any
-	// soundList: Sound[]
+	soundList: Sound[]
 }
 
-const SimpleRoutePassing: FC<SimpleRoutePassingProps> = ({ points, navigation }) => {
+const SimpleRoutePassing: FC<SimpleRoutePassingProps> = ({ points, navigation, soundList }) => {
 	const styles = useStyleSheet(themedStyles)
 
 	const POINTS_TO_PASS = useMemo(() => getPointsToPass(points), [])
 	const POINTS_COORDS = useMemo(() => getPointsCoords(POINTS_TO_PASS), [])
 
 	const { data: user } = userAPI.useGetProfileQuery()
+	// const soundList = navigation?.state?.params?.soundList as Sound[]
+	console.log('____SoundList', soundList)
+	// console.log('___navigation', navigation)
 
 	const [currentLocation, setLocation] = useState<ICoords | null>(null)
 	const [pointList, setPointList] = useState<PointPass[]>(POINTS_TO_PASS)
@@ -149,6 +153,7 @@ const SimpleRoutePassing: FC<SimpleRoutePassingProps> = ({ points, navigation })
 					<ScrollView>
 						<PointsPassingList
 							points={pointList}
+							soundList={soundList}
 						/>
 					</ScrollView>
 				</BottomSheet>

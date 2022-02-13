@@ -9,6 +9,16 @@ interface PointsListProps {
 
 const PointsList: FC<PointsListProps> = ({ points }) => {
 
+	// console.log(' ')
+	// console.log(' ')
+	// console.log(' ')
+	// console.log(' ')
+	// console.log('_____pointInfo', points[0].point.media)
+	// console.log(' ')
+	// console.log(' ')
+	// console.log(' ')
+	// console.log(' ')
+
 	return (
 		<View>
 			{

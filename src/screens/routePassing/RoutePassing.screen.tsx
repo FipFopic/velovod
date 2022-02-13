@@ -8,6 +8,7 @@ import { IPoint, RouteType } from '../../core/interfaces/IRoute'
 import NavigationService from '../../core/utils/Navigation.service'
 import SimpleRoutePassing from './components/SimpleRoutePassing'
 import themedStyles from './RoutePassing.style'
+import Sound from 'react-native-sound'
 // import SimpleRoutePassing from './components/SimpleRoutePassing'
 
 const RoutePassingScreen: FC = ({ route: routeNavigation, navigation }: any) => {
@@ -16,7 +17,7 @@ const RoutePassingScreen: FC = ({ route: routeNavigation, navigation }: any) => 
 	const id = routeNavigation?.params?.id as number
 	const type = routeNavigation?.params?.type as RouteType
 	const points = routeNavigation?.params?.points as IPoint[]
-	// const soundList = navigation?.state?.params?.soundList as Sound[]
+	const soundList = routeNavigation?.params?.soundList as Sound[]
 
 	const onPressBack = () => {
 		Alert.alert(
@@ -79,6 +80,7 @@ const RoutePassingScreen: FC = ({ route: routeNavigation, navigation }: any) => 
 			<SimpleRoutePassing
 				points={points}
 				navigation={navigation}
+				soundList={soundList}
 			/>
 		)
 	}

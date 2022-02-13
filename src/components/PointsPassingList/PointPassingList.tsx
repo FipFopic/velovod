@@ -2,17 +2,17 @@ import React, { FC, useEffect, useState } from 'react'
 import { Text, View } from 'react-native'
 import { PointPass } from '../../screens/routePassing/RoutePassing.helper'
 import { Icon, useStyleSheet } from '@ui-kitten/components'
-import { getImageSrc, getAudioSrc } from '../../core/utils/Main.helper'
+import {getImageSrc, getAudioSrc, getMediaSrc} from '../../core/utils/Main.helper'
 import Point from '../Point/Point'
 import themedStyles from './PointPassingList.style'
-// import Sound from 'react-native-sound'
+import Sound from 'react-native-sound'
 
 interface PointsPassingListProps {
   points: PointPass[]
-  // soundList: Sound[]
+  soundList: Sound[]
 }
 
-const PointsPassingList: FC<PointsPassingListProps> = ({ points }) => {
+const PointsPassingList: FC<PointsPassingListProps> = ({ points, soundList }) => {
 	const styles = useStyleSheet(themedStyles)
 
 	const [isAudioPlaying, setAudioPlaying] = useState(false)
@@ -20,19 +20,19 @@ const PointsPassingList: FC<PointsPassingListProps> = ({ points }) => {
 
 	const _playAudio = (index: number) => {
 		if (isAudioPlaying && actualAudioIndex !== index) {
-			// soundList[actualAudioIndex].pause()
+			soundList[actualAudioIndex].pause()
 		}
 
-		// if (!soundList[index].isPlaying()) {
-		// 	soundList[index].play(() => {
-		// 		setAudioPlaying(false)
-		// 	})
-		// 	setAudioPlaying(true)
-		// 	setActualAudioIndex(index)
-		// 	return
-		// }
+		if (!soundList[index].isPlaying()) {
+			soundList[index].play(() => {
+				setAudioPlaying(false)
+			})
+			setAudioPlaying(true)
+			setActualAudioIndex(index)
+			return
+		}
 
-		// soundList[index].pause()
+		soundList[index].pause()
 		setAudioPlaying(false)
 		setActualAudioIndex(-1)
 	}
@@ -46,22 +46,23 @@ const PointsPassingList: FC<PointsPassingListProps> = ({ points }) => {
 						key={pointInfo.index}
 						style={{ opacity: pointInfo.isPassed ? 1 : 0.5 }}
         		title={ pointInfo.data.point.title }
-						photo={ getImageSrc(pointInfo.data.point.media[1].id, 100) }
+						photo={ getMediaSrc(pointInfo.data.point.media, 'image', 100) }
 					>
 						{
 							// !soundList || soundList[pointInfo.index] &&
-							// <Icon
-							// 	style={styles.playIcon}
-							// 	width={40}
-							// 	height={40}
-							// 	fill={'#ecf0f1'}
-							// 	name={
-							// 		actualAudioIndex === pointInfo.index
-							// 			? 'pause-circle-outline'
-							// 			: 'play-circle-outline'
-							// 	}
-							// 	onPress={ () => pointInfo.isPassed && _playAudio(pointInfo.index) }
-							// />
+							soundList[pointInfo.index] &&
+							<Icon
+								style={styles.playIcon}
+								width={40}
+								height={40}
+								fill={'#ecf0f1'}
+								name={
+									actualAudioIndex === pointInfo.index
+										? 'pause-circle-outline'
+										: 'play-circle-outline'
+								}
+								onPress={ () => pointInfo.isPassed && _playAudio(pointInfo.index) }
+							/>
 						}
 					</Point>
         )

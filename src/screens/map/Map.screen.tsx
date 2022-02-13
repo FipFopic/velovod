@@ -8,7 +8,40 @@ import { StopWatch } from '../../core/utils/StopWatch.helper'
 import Point from '../../../src/components/Point/Point'
 import { getImageSrc } from '../../../src/core/utils/Main.helper'
 
-const MapScreen = ({ navigation }: any) => {
+// {"distance": "7.584",
+// 	"duration": "00:25:27",
+// 	"order_id": 0,
+// 	"point":
+// 		{
+// 			"cover": null,
+// 			"create_user": 113,
+// 			"description": "fds",
+// 			"id": 3215,
+// 			"latitude": "55.738983",
+// 			"longitude": "37.611004",
+// 			"media": [[Object], [Object]],
+// 			"place": {
+// 				"city": "Москва",
+// 				"city_district": null,
+// 				"country": "Россия",
+// 				"country_code": "ru",
+// 				"county": null,
+// 				"display_name": "069, 3-й Голутвинский переулок, Берсеневка, район Якиманка, Москва, Центральный федеральный округ, 119180, Россия"
+// 				"house_number": null,
+// 				"latitude": "55.73906",
+// 				"longitude": null,
+// 				"osm_id": 5736992621,
+// 				"place_id": 65066725,
+// 				"postcode": "119180",
+// 				"road": "3-й Голутвинский переулок",
+// 				"state": "Москва",
+// 				"suburb": "Берсеневка"
+// 				},
+// 			"title": "Парк искусств Музеон"
+// 		},
+// 	"radius": 60}
+
+	const MapScreen = ({ navigation }: any) => {
 	const styles = useStyleSheet(themedStyles)
 
 	const [isAddingRoute, setIsAddingRoute] = useState(false)
