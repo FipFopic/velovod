@@ -7,6 +7,7 @@ import themedStyles from './Map.style'
 import { StopWatch } from '../../core/utils/StopWatch.helper'
 import Point from '../../../src/components/Point/Point'
 import { getImageSrc } from '../../../src/core/utils/Main.helper'
+import {useAppSelector} from "../../core/hooks/redux";
 
 // {"distance": "7.584",
 // 	"duration": "00:25:27",
@@ -41,7 +42,7 @@ import { getImageSrc } from '../../../src/core/utils/Main.helper'
 // 		},
 // 	"radius": 60}
 
-	const MapScreen = ({ navigation }: any) => {
+const MapScreen = ({ navigation }: any) => {
 	const styles = useStyleSheet(themedStyles)
 
 	const [isAddingRoute, setIsAddingRoute] = useState(false)
@@ -54,6 +55,8 @@ import { getImageSrc } from '../../../src/core/utils/Main.helper'
 
 	const stopWatch = new StopWatch()
 	const [stopWatchData, setStopWatchData] = useState<string>('')
+
+	const { isAuth } = useAppSelector(state => state.auth)
 
 	const onPressBack = () => {
 		Alert.alert(
@@ -132,7 +135,7 @@ import { getImageSrc } from '../../../src/core/utils/Main.helper'
 					}}
 				/>
 
-				{!isAddingRoute &&
+				{!isAddingRoute && isAuth &&
 				<Button style={styles.createRouteButton} onPress={() => setIsAddingRoute(true)}>Создать маршрут</Button>
 				}
 
