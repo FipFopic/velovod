@@ -12,7 +12,7 @@ import {
 import FastImage from 'react-native-fast-image'
 import NavigationService from '../../core/utils/Navigation.service'
 import { IPoint } from '../../core/interfaces/IRoute'
-import {getAudioSrc, getImageSrc, getMediaSrc} from '../../core/utils/Main.helper'
+import { getAudioSrc, getImageSrc, getMediaSrc } from '../../core/utils/Main.helper'
 import { useAppSelector } from '../../core/hooks/redux'
 import { routeAPI } from '../../services/route/RouteService'
 import PointsList from '../../components/PointsList/PointsList'
@@ -23,7 +23,7 @@ import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps'
 import MapViewDirections from 'react-native-maps-directions'
 import { KEYS } from '../../config'
 import { getPointsCoords, getPointsToPass, PointPass } from '../routePassing/RoutePassing.helper'
-import Sound from "react-native-sound";
+import Sound from 'react-native-sound'
 
 const RouteDetailsScreen = ({ route: navigation }: any) => {
 	const styles = useStyleSheet(themedStyles)
@@ -50,7 +50,6 @@ const RouteDetailsScreen = ({ route: navigation }: any) => {
 		const [initialRegion, setInitialRegion] = useState({})
 		const [mapEventService, setMapEventService] = useState<any>()
 		const [isAudioLoading, setAudioLoading] = useState(false)
-
 
 		const POINTS_COORDS = points.map((point) => {
 			return {
@@ -156,7 +155,7 @@ const RouteDetailsScreen = ({ route: navigation }: any) => {
 
 								<OwnerInfo
 									name={route?.author?.name || ''}
-									photo={'https://i.pinimg.com/564x/c5/ab/39/c5ab39e1036b8fde3cb1b87222c14d09.jpg'}
+									photo={getImageSrc(route?.author?.avatar?.id || -1, 100)}
 								/>
 
 								<View style={styles.descriptionBox}>
@@ -324,7 +323,7 @@ const RouteDetailsScreen = ({ route: navigation }: any) => {
 									<>
 										<OwnerInfo
 											name={quest.author?.name || ''}
-											photo={'https://i.pinimg.com/564x/c5/ab/39/c5ab39e1036b8fde3cb1b87222c14d09.jpg'}
+											photo={getImageSrc(quest?.author?.avatar?.id || -1, 100)}
 										/>
 
 										<View style={styles.descriptionBox}>
