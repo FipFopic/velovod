@@ -16,8 +16,9 @@ import UpdateProfileScreen from '../screens/updateProfile/UpdateProfile.screen'
 
 const getTabBarIcon =
 	(name: string, { isFocused }: { isFocused: boolean }) => (
-		<Icon name={name} fill={'black'} style={{ width: 32, height: 32 }} />
+		<Icon name={name} fill={isFocused ? '#BC241C' : '#2c3e50'} style={{ width: 32, height: 32 }} />
 	)
+const getLabelStyle = (styles:any, focused: boolean) => focused ? styles.tabBarLabelStyle : styles.tabBarLabelStyleActive
 
 export type TabNavigationParams = {
 	RoutesStack: NavigatorScreenParams<RoutesStackParams>
@@ -145,6 +146,9 @@ const Navigation = () => {
 					component={RoutesScreenStack}
 					options={{
 						tabBarLabel: 'Маршруты',
+						tabBarLabelStyle: styles.tabBarLabelStyle,
+						tabBarInactiveTintColor: '#000',
+						tabBarActiveTintColor: '#BC241C',
 						tabBarIcon: ({ focused }) =>
 							getTabBarIcon('map-outline', { isFocused: focused })
 					}}
@@ -155,9 +159,13 @@ const Navigation = () => {
 					component={MapScreenStack}
 					options={{
 						tabBarLabel: 'Карта',
+						tabBarLabelStyle: styles.tabBarLabelStyle,
+						tabBarInactiveTintColor: '#000',
+						tabBarActiveTintColor: '#BC241C',
 						tabBarIcon: ({ focused }) =>
 							getTabBarIcon('navigation-2-outline', { isFocused: focused })
 					}}
+					// tabPress={() => }
 				/>
 
 				<TabNavigation.Screen
@@ -165,6 +173,9 @@ const Navigation = () => {
 					component={ProfileScreenStack}
 					options={{
 						tabBarLabel: 'Профиль',
+						tabBarLabelStyle: styles.tabBarLabelStyle,
+						tabBarInactiveTintColor: '#000',
+						tabBarActiveTintColor: '#BC241C',
 						tabBarIcon: ({ focused }) =>
 							getTabBarIcon('person-outline', { isFocused: focused })
 					}}

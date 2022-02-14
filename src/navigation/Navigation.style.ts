@@ -1,6 +1,5 @@
 import { StyleService } from '@ui-kitten/components'
 
-
 const themedStyles = StyleService.create({
 	bottomBarBox: {
 		width: '100%',
@@ -47,6 +46,14 @@ const themedStyles = StyleService.create({
 		// shadowRadius: 20,
 		// elevation: 19,
 	},
+	tabBarLabelStyle: {
+		fontWeight: '700',
+		fontSize: 10
+	},
+	tabBarLabelStyleActive: {
+		color: 'color-danger-500',
+		fontWeight: '700'
+	}
 })
 
 export default themedStyles
