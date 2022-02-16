@@ -1,11 +1,13 @@
-import React, {useEffect} from 'react';
-import { View } from 'react-native'
-import { Button, Text, useStyleSheet } from '@ui-kitten/components'
+import React, { useEffect } from 'react'
+import { Image, View } from 'react-native'
+import { Button, Icon, Text, useStyleSheet } from '@ui-kitten/components'
 import NavigationService from '../../core/utils/Navigation.service'
 import { useAppDispatch, useAppSelector } from '../../core/hooks/redux'
 import { doLogout } from '../../store/auth/ActionCreators'
 import { userAPI } from '../../services/user/UserService'
 import themedStyles from './Profile.style'
+import ProgressBar from '../../../src/components/ProgressBar/ProgressBar'
+import { getImageSrc } from '../../core/utils/Main.helper'
 
 const ProfileScreen = () => {
 	const styles = useStyleSheet(themedStyles)
@@ -15,6 +17,10 @@ const ProfileScreen = () => {
 	const { data: user, isLoading, error } = userAPI.useGetProfileQuery(undefined, {
 		skip: !isAuth
 	})
+
+	useEffect(() => {
+		console.log('__user', user.statistic)
+	}, [user])
 
 	const onPressLogout = () => {
 		dispatch(doLogout())
@@ -47,62 +53,80 @@ const ProfileScreen = () => {
 			<>
 				<View style={styles.pageBox}>
 					<View style={styles.userProfile}>
-
-						<Button
-							style={styles.logoutButton}
-							onPress={onPressLogout}
-						>Выйти</Button>
-						<Button
-							style={styles.logoutButton}
-							onPress={onPressEditProfile}
-						>Редактировать</Button>
+						<View style={styles.buttonBox}>
+							{/*<Button*/}
+							{/*	style={styles.logoutButton}*/}
+							{/*	onPress={onPressEditProfile}*/}
+							{/*>Редактировать</Button>*/}
+							{/*<Button*/}
+							{/*	style={styles.logoutButton}*/}
+							{/*	onPress={onPressLogout}*/}
+							{/*>*/}
+							<Icon
+								style={styles.logoutIcon}
+								fill={'#fff'}
+								name={'settings'}
+								onPress={onPressEditProfile}
+							/>
+							<Icon
+								style={styles.logoutIcon}
+								fill={'#fff'}
+								name={'log-out'}
+								onPress={onPressLogout}
+							/>
+							{/*</Button>*/}
+						</View>
 
 						<View style={styles.userInfo}>
 							{/* @ts-ignore */}
 							{/*<Image style={styles.userPhoto} source={{uri: 'https://i.pinimg.com/564x/aa/af/64/aaaf640914f8a504978e94802ddd52bc.jpg'}} />*/}
 							{/* @ts-ignore */}
-							{/* <Image style={styles.userPhoto} source={{uri: getImageSrc(user?.avatar ,100)}} /> */}
+							<View style={styles.userPhotoBox}>
+								<Image style={styles.userPhoto} source={{ uri: getImageSrc(user?.avatar?.id, 100) }} />
+							</View>
 							<View style={styles.userIdentity}>
 								<Text style={styles.userName}>{user?.name || 'No name'}</Text>
 								<Text>{user?.email || 'No email'}</Text>
 							</View>
 
 							<View style={styles.userAchieves}>
-								<View style={styles.levelBox}>
-									<View style={styles.levelLabel}>
-										<Text>{user?.statistic?.level?.level?.title || '0'}</Text>
-										<Text>{user?.count_velocoin?.toString()  || '0'} Velocoins</Text>
+								<View style={styles.topAchievesBar}>
+									<View style={styles.levelBox}>
+										<View style={styles.levelLabel}>
+											<Text>{user?.statistic?.level?.level?.title || '0'}</Text>
+											<Text style={styles.levelCounter}>{user?.statistic?.level?.value || '0'} / {user?.statistic?.level?.level?.max || '0'}</Text>
+										</View>
+
+										{
+											user?.statistic?.level?.value &&
+											<ProgressBar
+												value={ 100 * (user?.statistic?.level?.value || 0) / (user?.statistic?.level?.level?.max || 1) }
+											/>
+										}
+									</View>
+									<View style={styles.velocoinBox}>
+										<View style={styles.velocoinLabel}>
+											<Text>{user?.count_velocoin?.toString() || '0'}</Text>
+											<Image
+												style={styles.velocoinImage}
+												source={require('../../../src/theme/img/velocoin.png')}/>
+										</View>
+										<Text>велокоины</Text>
 									</View>
 
-									{/*
-                  // TODO add level progressbar
-                */}
-									{
-										// user?.statistic?.level?.value &&
-										// <ProgressBar
-										// 	value={ 100 * user.statistic.level.value / user.statistic.level.max }
-										// />
-										// <ProgressBar value={30}/>
-									}
 								</View>
 
 								<View style={styles.achieveDetails}>
 									<View style={styles.achieve}>
-										{
-											<Text>0</Text>
-										}
+										<Text style={styles.achieveCounter}>{user?.statistic?.count_go_km || 0}</Text>
 										<Text>пройдено км.</Text>
 									</View>
 									<View style={styles.achieve}>
-										{
-											<Text>0</Text>
-										}
+										<Text style={styles.achieveCounter}>{user?.statistic?.count_create_routes || 0}</Text>
 										<Text>маршруты</Text>
 									</View>
 									<View style={styles.achieve}>
-										{
-											<Text>0</Text>
-										}
+										<Text style={styles.achieveCounter}>{user?.statistic?.count_create_points || 0}</Text>
 										<Text>точки</Text>
 									</View>
 								</View>
