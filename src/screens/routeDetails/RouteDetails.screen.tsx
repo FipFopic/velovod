@@ -149,6 +149,7 @@ const RouteDetailsScreen = ({ route: navigation }: any) => {
 								{
 									!isLoading && !isAudioLoading && !error && points.length > 0 &&
 									<Button
+										style={styles.beginButton}
 										onPress={onPressStartRoute}
 									>Начать маршрут</Button>
 								}

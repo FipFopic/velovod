@@ -14,11 +14,15 @@ const themedStyles = StyleService.create({
 		alignItems: 'center',
 		marginBottom: 20
 	},
+	beginButton: {
+		marginTop: 15,
+		marginBottom: 15
+	},
 	roadImage: {
 		width: '100%',
 		height: 200,
 		borderRadius: theme.BORDER_RADIUS,
-		backgroundColor: 'color-basic-100',
+		backgroundColor: 'color-basic-100'
 	},
 	descriptionBox: {
 		width: '100%',
@@ -46,8 +50,8 @@ const themedStyles = StyleService.create({
 	infoSlide: {
 		// backgroundColor: 'color-basic-300',
 		height: 600,
-		paddingBottom: 100,
-		display: "flex",
+		// paddingBottom: 100,
+		display: 'flex',
 		alignItems: 'center',
 		// paddingLeft: '7,5%',
 		// paddingRight: '7,5%'
@@ -56,7 +60,7 @@ const themedStyles = StyleService.create({
 		width: '85%',
 		// backgroundColor: 'color-basic-100',
 		// borderRadius: theme.BORDER_RADIUS,
-		padding: theme.BORDER_RADIUS/2,
+		padding: theme.BORDER_RADIUS / 2,
 		marginBottom: 100
 	}
 })
