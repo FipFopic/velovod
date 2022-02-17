@@ -18,10 +18,6 @@ const ProfileScreen = () => {
 		skip: !isAuth
 	})
 
-	useEffect(() => {
-		console.log('__user', user.statistic)
-	}, [user])
-
 	const onPressLogout = () => {
 		dispatch(doLogout())
 	}
@@ -78,9 +74,6 @@ const ProfileScreen = () => {
 						</View>
 
 						<View style={styles.userInfo}>
-							{/* @ts-ignore */}
-							{/*<Image style={styles.userPhoto} source={{uri: 'https://i.pinimg.com/564x/aa/af/64/aaaf640914f8a504978e94802ddd52bc.jpg'}} />*/}
-							{/* @ts-ignore */}
 							<View style={styles.userPhotoBox}>
 								<Image style={styles.userPhoto} source={{ uri: getImageSrc(user?.avatar?.id, 100) }} />
 							</View>
