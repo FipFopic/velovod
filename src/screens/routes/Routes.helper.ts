@@ -8,9 +8,8 @@ export interface RouteTab {
 }
 
 export const isEndOfScroll = (nativeEvent: NativeScrollEvent): boolean => {
-	console.log('isEndOfScroll')
 	const { layoutMeasurement, contentOffset, contentSize } = nativeEvent
-	const paddingToBottom = 1000
+	const paddingToBottom = 200
 
 	return layoutMeasurement.height + contentOffset.y >=
 		contentSize.height - paddingToBottom

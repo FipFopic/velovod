@@ -38,16 +38,18 @@ const RoutesScreen = () => {
 	const [questList, setQuestList] = useState<IRoute[]>([])
 	const [questPage, setQuestPage] = useState(1)
 	const [isEndQuest, setEndQuest] = useState(false)
+	const [isLoadingRoutes, setLoadingRoutes] = useState(false)
+	const [isLoadingQuests, setLoadingQuests] = useState(false)
 
 	const {
 		data: routesChunk,
-		isLoading: isLoadingRoutes,
+		// isLoading: isLoadingRoutes,
 		error: errorRoutes
 	} = routeAPI.useFetchRoutesQuery({ page: routePage }, { skip: isEndRoute })
 
 	const {
 		data: questsChunk,
-		isLoading: isLoadingQuests,
+		// isLoading: isLoadingQuests,
 		error: errorQuests
 	} = routeAPI.useFetchQuestsQuery({ page: questPage }, { skip: isEndQuest })
 
@@ -57,6 +59,7 @@ const RoutesScreen = () => {
 		} else if (routesChunk?.length === 0) {
 			setEndRoute(true)
 		}
+		setLoadingRoutes(false)
 	}, [routesChunk])
 
 	useEffect(() => {
@@ -65,6 +68,7 @@ const RoutesScreen = () => {
 		} else if (questsChunk?.length === 0) {
 			setEndQuest(true)
 		}
+		setLoadingQuests(false)
 	}, [questsChunk])
 
 	const onPressRouteCard = (route: IRoute, type: RouteType) => {
@@ -75,14 +79,14 @@ const RoutesScreen = () => {
 	}
 
 	const scrollHandler = ({ nativeEvent }: NativeSyntheticEvent<NativeScrollEvent>) => {
-		if (!isEndOfScroll(nativeEvent)) {
-			return
-		}
+		if (isLoadingRoutes || isLoadingQuests || isEndRoute || isEndQuest || !isEndOfScroll(nativeEvent)) return
 
 		if (activeTab.type === 'route') {
 			setRoutePage(routePage + 1)
+			setLoadingRoutes(true)
 		} else if (activeTab.type === 'quest') {
 			setQuestPage(questPage + 1)
+			setLoadingQuests(true)
 		}
 	}
 
@@ -136,7 +140,7 @@ const RoutesScreen = () => {
 								}
 								{
 									isLoadingRoutes &&
-									<View>
+									<View style={styles.bottomSpinner}>
 										<Spinner />
 									</View>
 								}
