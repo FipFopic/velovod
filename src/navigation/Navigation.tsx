@@ -13,6 +13,7 @@ import ProfileScreen from '../screens/profile/Profile.screen'
 import LoginScreen from '../screens/login/Login.screen'
 import SignupScreen from '../screens/signup/Signup.screen'
 import UpdateProfileScreen from '../screens/updateProfile/UpdateProfile.screen'
+import { Platform, SafeAreaView } from 'react-native'
 
 const getTabBarIcon =
 	(name: string, { isFocused }: { isFocused: boolean }) => (
@@ -43,14 +44,17 @@ const RoutesScreenStack = () => {
 				name='Routes'
 				component={RoutesScreen}
 				options={{
+					headerShown: false,
 					title: 'Маршруты'
-					// headerShown: false
 				}}
 			/>
 			<RoutesStack.Screen
 				name='RouteDetails'
 				component={RouteDetailsScreen}
 				options={{
+					headerStyle: {
+						backgroundColor: '#ecf0f1'
+					},
 					title: 'О маршруте'
 				}}
 			/>
@@ -78,6 +82,9 @@ const MapScreenStack = () => {
 				name='Map'
 				component={MapScreen}
 				options={{
+					headerStyle: {
+						backgroundColor: '#ecf0f1'
+					},
 					title: 'Создание маршрута'
 				}}
 			/>
@@ -101,6 +108,7 @@ const ProfileScreenStack = () => {
 				name='Profile'
 				component={ProfileScreen}
 				options={{
+					headerShown: false,
 					title: 'Профиль'
 				}}
 			/>
@@ -140,6 +148,9 @@ const Navigation = () => {
 					headerShown: false,
 					tabBarHideOnKeyboard: true
 				})}
+				sceneContainerStyle={
+					Platform.OS === 'ios' ? { paddingTop: 50 } : {}
+				}
 			>
 				<TabNavigation.Screen
 					name='RoutesStack'
@@ -165,7 +176,6 @@ const Navigation = () => {
 						tabBarIcon: ({ focused }) =>
 							getTabBarIcon('navigation-2-outline', { isFocused: focused })
 					}}
-					// tabPress={() => }
 				/>
 
 				<TabNavigation.Screen

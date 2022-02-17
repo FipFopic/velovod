@@ -99,6 +99,9 @@ const RoutesScreen = () => {
 						<TabBar
 							selectedIndex={activeTab.id}
 							onSelect={ idx => setActiveTab(tabs[idx]) }
+							style={{
+								backgroundColor: '#ecf0f1'
+							}}
 						>
 							{
 								tabs &&
@@ -110,7 +113,7 @@ const RoutesScreen = () => {
 
 						<ViewPager
 							selectedIndex={activeTab.id}
-							onSelect={ idx => setActiveTab(tabs[idx]) }
+							onSelect={ idx => setActiveTab(tabs[idx])}
 						>
 
 							{/* TODO add filter */}
