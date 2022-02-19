@@ -19,6 +19,7 @@ export const routeAPI = createApi({
 			const accessToken = await getFromStorage('accessToken')
 			if (accessToken) {
 				headers.set('Authorization', `Bearer ${accessToken}`)
+				console.log('accessToken', accessToken)
 			}
 			headers.set('Content-Type', 'application/json')
 

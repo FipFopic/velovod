@@ -33,6 +33,7 @@ const SimpleRoutePassing: FC<SimpleRoutePassingProps> = ({ routeId, points, navi
 	const POINTS_COORDS = useMemo(() => getPointsCoords(POINTS_TO_PASS), [])
 
 	const { data: user } = userAPI.useGetProfileQuery()
+	const [completeRoute, res] = routeAPI.useCompleteRouteMutation()
 
 	const [currentLocation, setLocation] = useState<ICoords | null>(null)
 	const [pointList, setPointList] = useState<PointPass[]>(POINTS_TO_PASS)
@@ -42,6 +43,11 @@ const SimpleRoutePassing: FC<SimpleRoutePassingProps> = ({ routeId, points, navi
 
 	const bottomSheetRef = useRef<BottomSheet>(null)
 	const snapPoints = useMemo(() => ['5%', '50%', '90%'], [])
+
+	useEffect(() => {
+		console.log('!!!routeId', routeId)
+		console.log('!!!res-complete', res.data?.array)
+	}, [res])
 
 	const initialRegion = {
 		latitude: +pointList[0].data.point.latitude,
@@ -72,15 +78,8 @@ const SimpleRoutePassing: FC<SimpleRoutePassingProps> = ({ routeId, points, navi
 		return false
 	}
 
-	const [completeRoute, res] = routeAPI.useCompleteRouteMutation()
-
-	useEffect(() => {
-		console.log('!!!routeId', routeId)
-		console.log('!!!res-complete', res.data?.array)
-	}, [res])
-
 	const onPressEnd = () => {
-		completeRoute({ routeId: routeId, polyline: '', countPoints: 4, distance: 1 })
+		completeRoute({ routeId: routeId, polyline: '', countPoints: 13, distance: 8 })
 	}
 
 	const onUserLocationChange = (e: EventUserLocation) => {
