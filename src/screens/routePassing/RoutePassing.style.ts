@@ -16,6 +16,10 @@ const themedStyles = StyleService.create({
 		height: 20,
 		marginRight: 20,
 		alignSelf: 'flex-end'
+	},
+	endButton: {
+		width: '50%',
+		alignSelf: 'center'
 	}
 })
 

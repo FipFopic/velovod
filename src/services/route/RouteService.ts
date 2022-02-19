@@ -3,7 +3,10 @@ import { getFromStorage } from '../../core/utils/Storage.service'
 import { IResponse } from '../../core/interfaces/IResponse'
 import { IRoute } from '../../core/interfaces/IRoute'
 import { REST_API, REST_END } from '../../config'
-import { IFetchRoutesData } from './types'
+import {
+	ICompleteRouteParams,
+	IFetchRoutesParams
+} from './types'
 
 const FETCH_LIMIT = 10
 const CACHING_TIME = 60 * 10
@@ -24,15 +27,24 @@ export const routeAPI = createApi({
 	}),
 	tagTypes: ['Route', 'Quest'],
 	endpoints: (build) => ({
-		fetchRoutes: build.query<IRoute[], IFetchRoutesData>({
-			query: ({ page = 1, limit = FETCH_LIMIT }) => ({
-				url: REST_END.routes,
-				method: 'POST',
-				body: {
+		fetchRoutes: build.query<IRoute[], IFetchRoutesParams>({
+			query: ({ latitude, longitude, page = 1, limit = FETCH_LIMIT }) => {
+				const body = {
 					offset: page === 1 ? 0 : FETCH_LIMIT * page,
 					limit
+				} as IFetchRoutesParams
+
+				if (latitude && longitude) {
+					body.latitude = latitude
+					body.longitude = longitude
 				}
-			}),
+
+				return {
+					url: REST_END.routes,
+					method: 'POST',
+					body
+				}
+			},
 			transformResponse: (response: IResponse<IRoute>) => {
 				return response.array
 			},
@@ -42,15 +54,24 @@ export const routeAPI = createApi({
 					? [...result.map(({ id }) => ({ type: 'Route' as const, id })), 'Route']
 					: ['Route']
 		}),
-		fetchQuests: build.query<IRoute[], IFetchRoutesData>({
-			query: ({ page = 1, limit = FETCH_LIMIT }) => ({
-				url: REST_END.quests,
-				method: 'POST',
-				body: {
+		fetchQuests: build.query<IRoute[], IFetchRoutesParams>({
+			query: ({ latitude, longitude, page = 1, limit = FETCH_LIMIT }) => {
+				const body = {
 					offset: page === 1 ? 0 : FETCH_LIMIT * page,
 					limit
+				} as IFetchRoutesParams
+
+				if (latitude && longitude) {
+					body.latitude = latitude
+					body.longitude = longitude
 				}
-			}),
+
+				return {
+					url: REST_END.quests,
+					method: 'POST',
+					body
+				}
+			},
 			transformResponse: (response: IResponse<IRoute>) => {
 				return response.array
 			},
@@ -87,6 +108,21 @@ export const routeAPI = createApi({
 			},
 			keepUnusedDataFor: CACHING_TIME,
 			providesTags: ['Quest']
+		}),
+		completeRoute: build.mutation<any, ICompleteRouteParams>({
+			query: ({ routeId, polyline, countPoints, distance }) => ({
+				url: REST_END.routeComplete,
+				method: 'POST',
+				body: {
+					item_id: routeId,
+					polyline,
+					count_points: countPoints,
+					distance
+				}
+			}),
+			transformResponse: (response: any) => {
+				return response
+			}
 		})
 	})
 })

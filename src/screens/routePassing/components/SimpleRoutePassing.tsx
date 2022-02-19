@@ -1,7 +1,7 @@
 import BottomSheet from '@gorhom/bottom-sheet'
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react'
 import { Alert, ScrollView, View } from 'react-native'
-import {Button, Icon, Text, useStyleSheet} from '@ui-kitten/components'
+import { Button, Icon, Text, useStyleSheet } from '@ui-kitten/components'
 import MapView, { EventUserLocation, Marker, PROVIDER_GOOGLE } from 'react-native-maps'
 import MapViewDirections from 'react-native-maps-directions'
 import PointsPassingList
@@ -17,23 +17,22 @@ import {
 } from '../RoutePassing.helper'
 import themedStyles from '../RoutePassing.style'
 import Sound from 'react-native-sound'
+import { routeAPI } from '../../../services/route/RouteService'
 
 interface SimpleRoutePassingProps {
+	routeId: number
 	points: IPoint[]
 	navigation: any
 	soundList: Sound[]
 }
 
-const SimpleRoutePassing: FC<SimpleRoutePassingProps> = ({ points, navigation, soundList }) => {
+const SimpleRoutePassing: FC<SimpleRoutePassingProps> = ({ routeId, points, navigation, soundList }) => {
 	const styles = useStyleSheet(themedStyles)
 
 	const POINTS_TO_PASS = useMemo(() => getPointsToPass(points), [])
 	const POINTS_COORDS = useMemo(() => getPointsCoords(POINTS_TO_PASS), [])
 
 	const { data: user } = userAPI.useGetProfileQuery()
-	// const soundList = navigation?.state?.params?.soundList as Sound[]
-	console.log('____SoundList', soundList)
-	// console.log('___navigation', navigation)
 
 	const [currentLocation, setLocation] = useState<ICoords | null>(null)
 	const [pointList, setPointList] = useState<PointPass[]>(POINTS_TO_PASS)
@@ -71,6 +70,17 @@ const SimpleRoutePassing: FC<SimpleRoutePassingProps> = ({ points, navigation, s
 			]
 		)
 		return false
+	}
+
+	const [completeRoute, res] = routeAPI.useCompleteRouteMutation()
+
+	useEffect(() => {
+		console.log('!!!routeId', routeId)
+		console.log('!!!res-complete', res.data?.array)
+	}, [res])
+
+	const onPressEnd = () => {
+		completeRoute({ routeId: routeId, polyline: '', countPoints: 4, distance: 1 })
 	}
 
 	const onUserLocationChange = (e: EventUserLocation) => {
@@ -145,11 +155,24 @@ const SimpleRoutePassing: FC<SimpleRoutePassingProps> = ({ points, navigation, s
 					index={1}
 					snapPoints={snapPoints}
 				>
-					<Icon
-						style={styles.exitButton}
-						fill='#000'
-						name='close-outline'
-						onPress={onPressBack}/>
+					{
+						// pointList[pointList.length - 1].isPassed &&
+						<Button
+							style={styles.endButton}
+							size={'small'}
+							onPress={onPressEnd}
+						>
+							Завершить прохождение
+						</Button>
+					}
+					{
+						!pointList[pointList.length - 1].isPassed &&
+						<Icon
+							style={styles.exitButton}
+							fill='#000'
+							name='close-outline'
+							onPress={onPressBack}/>
+					}
 					<ScrollView>
 						<PointsPassingList
 							points={pointList}

@@ -78,6 +78,7 @@ const RoutePassingScreen: FC = ({ route: routeNavigation, navigation }: any) => 
 	if (type === 'route') {
 		return (
 			<SimpleRoutePassing
+				routeId={id}
 				points={points}
 				navigation={navigation}
 				soundList={soundList}
