@@ -7,7 +7,7 @@ import themedStyles from './Map.style'
 import { StopWatch } from '../../core/utils/StopWatch.helper'
 import Point from '../../../src/components/Point/Point'
 import { getImageSrc } from '../../../src/core/utils/Main.helper'
-import {useAppSelector} from "../../core/hooks/redux";
+import { useAppSelector } from '../../core/hooks/redux'
 
 // {"distance": "7.584",
 // 	"duration": "00:25:27",
@@ -42,11 +42,27 @@ import {useAppSelector} from "../../core/hooks/redux";
 // 		},
 // 	"radius": 60}
 
+interface INewMedia {
+	id: number
+}
+
+interface INewPoint {
+	title: string
+	description: string
+	media?: Array<INewMedia>
+	latitude?: string
+	longitude?: string
+}
+
 const MapScreen = ({ navigation }: any) => {
 	const styles = useStyleSheet(themedStyles)
+	const EMPTY_POINT: INewPoint = {
+		title: 'Новая точка',
+		description: ''
+	}
 
 	const [isAddingRoute, setIsAddingRoute] = useState(false)
-	const [newPoints, setNewPoints] = useState<Array<any>>([{}])
+	const [newPoints, setNewPoints] = useState<Array<INewPoint>>([])
 
 	const sheetPositions = ['14%', '50%', '90%']
 
@@ -55,6 +71,7 @@ const MapScreen = ({ navigation }: any) => {
 
 	const stopWatch = new StopWatch()
 	const [stopWatchData, setStopWatchData] = useState<string>('')
+	const [editPointId, setEditPointId] = useState<number>(-1)
 
 	const { isAuth } = useAppSelector(state => state.auth)
 
@@ -116,6 +133,28 @@ const MapScreen = ({ navigation }: any) => {
 		}
 	}, [])
 
+	const editPoint = (index: number) => {
+		setEditPointId(index)
+	}
+
+	const savePoint = (point: INewPoint) => {
+		setNewPoints(newPoints.map((p, i) => {
+			if (i !== editPointId) return p
+			return point
+		}))
+		setEditPointId(-1)
+	}
+
+	const removePoint = (index: number) => {
+		const arr = newPoints.filter((elem, i) => i !== index)
+		setNewPoints(arr)
+	}
+
+	const exitAddingRoute = () => {
+		setNewPoints([])
+		setIsAddingRoute(false)
+	}
+
 	return (
 		<>
 			<View style={styles.mapContainer}>
@@ -157,7 +196,7 @@ const MapScreen = ({ navigation }: any) => {
 							</View>
 							<View style={styles.pointQuant}>
 								<Text style={styles.statusBarItemTitle}>ТОЧКИ ПУТИ</Text>
-								<Text style={styles.statusBarItemContent}>2</Text>
+								<Text style={styles.statusBarItemContent}>{newPoints.length}</Text>
 							</View>
 						</View>
 
@@ -168,7 +207,7 @@ const MapScreen = ({ navigation }: any) => {
 							{
 								newPoints && newPoints.map((point, index) =>
 									<View
-										key={index}
+										key={index + point.title}
 										style={styles.pointBox}
 									>
 										<Point title={'title'} photo={getImageSrc(1, 100)} style={{ opacity: 1 }}/>
@@ -176,11 +215,15 @@ const MapScreen = ({ navigation }: any) => {
 											<Icon
 												style={{ width: 20, height: 20 }}
 												fill='#000'
-												name='edit-outline'/>
+												name='edit-outline'
+												onPress={() => editPoint(index)}
+											/>
 											<Icon
 												style={{ width: 20, height: 20 }}
 												fill='#000'
-												name='close-outline'/>
+												name='close-outline'
+												onPress={() => removePoint(index)}
+											/>
 										</View>
 									</View>
 								)
@@ -189,14 +232,14 @@ const MapScreen = ({ navigation }: any) => {
 						<View style={styles.sheetButtonGroup}>
 							<Button
 								style={styles.addPointButton}
-								onPress={() => setNewPoints([{}, {}])}
+								onPress={() => setNewPoints(newPoints.concat(EMPTY_POINT))}
 							>
 								Добавить точку
 							</Button>
 							<Button
 								style={styles.addPointButton}
 								size='small'
-								onPress={() => setIsAddingRoute(false)}
+								onPress={exitAddingRoute}
 							>
 								Выйти
 							</Button>
