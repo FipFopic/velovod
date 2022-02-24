@@ -95,7 +95,6 @@ const RouteDetailsScreen = ({ route: navigation }: any) => {
 
 				const audioSrc = getMediaSrc(point.point.media, 'audio')
 				if (!audioSrc) {
-					console.log('audioSrc', audioSrc)
 					return ''
 				}
 

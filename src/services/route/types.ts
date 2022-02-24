@@ -12,3 +12,7 @@ export interface ICompleteRouteParams {
 	countPoints?: number
 	distance?: number
 }
+
+export interface IAddRoute {
+	points: any
+}

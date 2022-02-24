@@ -4,6 +4,7 @@ import { IResponse } from '../../core/interfaces/IResponse'
 import { IRoute } from '../../core/interfaces/IRoute'
 import { REST_API, REST_END } from '../../config'
 import {
+	IAddRoute,
 	ICompleteRouteParams,
 	IFetchRoutesParams
 } from './types'
@@ -19,7 +20,6 @@ export const routeAPI = createApi({
 			const accessToken = await getFromStorage('accessToken')
 			if (accessToken) {
 				headers.set('Authorization', `Bearer ${accessToken}`)
-				console.log('accessToken', accessToken)
 			}
 			headers.set('Content-Type', 'application/json')
 
@@ -119,6 +119,18 @@ export const routeAPI = createApi({
 					polyline,
 					count_points: countPoints,
 					distance
+				}
+			}),
+			transformResponse: (response: any) => {
+				return response
+			}
+		}),
+		addRoute: build.mutation<any, IAddRoute>({
+			query: (points) => ({
+				url: REST_END.addRoute,
+				method: 'POST',
+				body: {
+					json: points
 				}
 			}),
 			transformResponse: (response: any) => {

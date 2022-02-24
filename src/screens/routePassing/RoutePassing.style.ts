@@ -11,6 +11,13 @@ const themedStyles = StyleService.create({
 	map: {
 		height: '95%'
 	},
+	locationButton: {
+		width: 50,
+		height: 50,
+		position: 'absolute',
+		top: 10,
+		right: 10
+	},
 	exitButton: {
 		width: 20,
 		height: 20,

@@ -1,13 +1,27 @@
 import BottomSheet from '@gorhom/bottom-sheet'
-import { Button, Icon, useStyleSheet } from '@ui-kitten/components'
+import { Button, Icon, Input, Spinner, useStyleSheet } from '@ui-kitten/components'
 import React, { useCallback, useMemo, useState, useRef, useEffect } from 'react'
-import { Alert, BackHandler, ScrollView, Text, View } from 'react-native'
-import MapView, { PROVIDER_DEFAULT, PROVIDER_GOOGLE } from 'react-native-maps'
+import {
+	Alert,
+	BackHandler,
+	KeyboardAvoidingView,
+	ScrollView,
+	Text,
+	TextInput,
+	TouchableOpacity,
+	View
+} from 'react-native'
+import MapView, { Marker, PROVIDER_DEFAULT, PROVIDER_GOOGLE } from 'react-native-maps'
 import themedStyles from './Map.style'
 import { StopWatch } from '../../core/utils/StopWatch.helper'
 import Point from '../../../src/components/Point/Point'
 import { getImageSrc } from '../../../src/core/utils/Main.helper'
 import { useAppSelector } from '../../core/hooks/redux'
+import { KEYS } from '../../config'
+import MapViewDirections from 'react-native-maps-directions'
+import MyLocationButton from '../../components/MyLocationButton/MyLocationButton'
+import { routeAPI } from '../../services/route/RouteService'
+import NavigationService from '../../core/utils/Navigation.service'
 
 // {"distance": "7.584",
 // 	"duration": "00:25:27",
@@ -42,6 +56,23 @@ import { useAppSelector } from '../../core/hooks/redux'
 // 		},
 // 	"radius": 60}
 
+// var dictionaryObject: Dictionary<String, Any> = [:]
+// dictionaryObject["title"] = "unknown"
+// dictionaryObject["polyline"] = "ololo"
+// dictionaryObject["distance"] = distance / 1_000
+// dictionaryObject["duration"] = durationString
+// dictionaryObject["media"] = mediaArray
+// dictionaryObject["points"] = pointsArray
+
+interface INewRoute {
+	title: string
+	polyline: string
+	distance: number
+	duration: string
+	media: Array<any>
+	points: Array<any>
+}
+
 interface INewMedia {
 	id: number
 }
@@ -64,7 +95,7 @@ const MapScreen = ({ navigation }: any) => {
 	const [isAddingRoute, setIsAddingRoute] = useState(false)
 	const [newPoints, setNewPoints] = useState<Array<INewPoint>>([])
 
-	const sheetPositions = ['14%', '50%', '90%']
+	const sheetPositions = ['25%', '50%', '90%']
 
 	const bottomSheetRef = useRef<BottomSheet>(null)
 	const snapPoints = useMemo(() => sheetPositions, [])
@@ -72,6 +103,16 @@ const MapScreen = ({ navigation }: any) => {
 	const stopWatch = new StopWatch()
 	const [stopWatchData, setStopWatchData] = useState<string>('')
 	const [editPointId, setEditPointId] = useState<number>(-1)
+	const [isEditPoint, setIsEditPoint] = useState<boolean>(false)
+
+	const [editTitle, setEditTitle] = useState<string>('')
+	const [editDescription, setEditDescription] = useState<string>('')
+
+	const [currentLocation, setCurrentLocation] = useState<any>({})
+	const [routeDistance, setDistance] = useState<number>(0)
+	const [mapEventService, setMapEventService] = useState<any>()
+
+	const [addRoute, { data, error, isLoading }] = routeAPI.useAddRouteMutation()
 
 	const { isAuth } = useAppSelector(state => state.auth)
 
@@ -104,12 +145,12 @@ const MapScreen = ({ navigation }: any) => {
 
 		const stopWatchInterval = setInterval(() => {
 			setStopWatchData(stopWatch.actualValue)
-			console.log('testDate', stopWatch.actualValue)
 		}, 1000)
 
 		return () => clearInterval(stopWatchInterval)
 	}, [isAddingRoute])
 
+	//navigation
 	useEffect(() => {
 		navigation?.setOptions({
 			headerShown: !isAddingRoute
@@ -126,6 +167,7 @@ const MapScreen = ({ navigation }: any) => {
 		})
 	}, [navigation, isAddingRoute])
 
+	//onPressBack
 	useEffect(() => {
 		BackHandler.addEventListener('hardwareBackPress', onPressBack)
 		return () => {
@@ -133,16 +175,41 @@ const MapScreen = ({ navigation }: any) => {
 		}
 	}, [])
 
+	useEffect(() => {
+		if (currentLocation.longitude) moveToUserLocation()
+	}, [currentLocation])
+
+	const moveToUserLocation = () => {
+		mapEventService.animateToRegion({ ...currentLocation, latitudeDelta: 0.01, longitudeDelta: 0.01 }, 500)
+	}
+
+	const addNewPoint = () => {
+		const pointToAdd = EMPTY_POINT
+		pointToAdd.latitude = currentLocation.latitude + 0.01
+		pointToAdd.longitude = currentLocation.longitude + 0.01
+		setNewPoints(newPoints.concat(pointToAdd))
+	}
+
 	const editPoint = (index: number) => {
+		setIsEditPoint(true)
 		setEditPointId(index)
+		setEditTitle(newPoints[index].title)
+		setEditDescription(newPoints[index].description)
 	}
 
 	const savePoint = (point: INewPoint) => {
-		setNewPoints(newPoints.map((p, i) => {
+		const editedPoint = newPoints.map((p, i) => {
 			if (i !== editPointId) return p
 			return point
-		}))
+		})
+		const editedPointList = newPoints
+		editedPointList[editPointId].title = editTitle
+		editedPointList[editPointId].description = editDescription
+		setNewPoints(editedPointList)
+		setIsEditPoint(false)
 		setEditPointId(-1)
+		setEditTitle('')
+		setEditDescription('')
 	}
 
 	const removePoint = (index: number) => {
@@ -155,36 +222,108 @@ const MapScreen = ({ navigation }: any) => {
 		setIsAddingRoute(false)
 	}
 
+	const saveNewRoute = () => {
+		const points = newPoints.map((p) => {
+			return { point: p }
+		})
+		const route: INewRoute = {
+			title: 'unknown',
+			polyline: '',
+			distance: routeDistance,
+			duration: stopWatchData,
+			media: [],
+			points: points
+		}
+		addRoute(route)
+		setIsAddingRoute(false)
+		stopWatch.stop()
+		NavigationService.navigate('Routes')
+	}
+
 	return (
 		<>
 			<View style={styles.mapContainer}>
 
 				<MapView
 					style={styles.map}
+					ref={setMapEventService}
 					provider={PROVIDER_GOOGLE}
 					loadingEnabled={true}
 					showsCompass={true}
 					showsUserLocation={true}
-					showsMyLocationButton={true}
+					onUserLocationChange={(location) => setCurrentLocation(location.nativeEvent.coordinate)}
 					initialRegion={{
-						latitude: 37.78825,
-						longitude: -122.4324,
+						latitude: -49.026662,
+						longitude: 38.973106,
 						latitudeDelta: 0.0922,
 						longitudeDelta: 0.0421
 					}}
-				/>
+				>
+					{
+						newPoints &&
+						newPoints.map((point, index) =>
+							<Marker
+								key={index + point.title + point.latitude}
+								coordinate={{
+									latitude: +point.latitude,
+									longitude: +point.longitude
+								}}
+								title={point.title}
+								description={point.description}
+							/>
+						)
+					}
+					{
+						newPoints && isAddingRoute &&
+						// @ts-ignore
+						<MapViewDirections
+							apikey={KEYS.GOOGLE.key}
+							optimizeWaypoints={false}
+							origin={currentLocation || ''}
+							waypoints={ newPoints.length > 2 ? newPoints.slice(1, -1) : undefined }
+							mode={'WALKING'}
+							precision={'high'}
+							destination={ newPoints[newPoints.length - 1] }
+							strokeWidth={4}
+							strokeColor='red'
+							onReady={({ distance }) => setDistance(distance)}
+						/>
+					}
+				</MapView>
+
+				<TouchableOpacity style={styles.locationButton} onPress={moveToUserLocation}>
+					<MyLocationButton />
+				</TouchableOpacity>
 
 				{!isAddingRoute && isAuth &&
-				<Button style={styles.createRouteButton} onPress={() => setIsAddingRoute(true)}>Создать маршрут</Button>
+					<Button style={styles.createRouteButton} onPress={() => setIsAddingRoute(true)}>Создать маршрут</Button>
 				}
 
 				{ isAddingRoute &&
 				<BottomSheet
 					ref={bottomSheetRef}
-					// index={snapPos}
 					snapPoints={snapPoints}
 				>
+					<Icon
+						style={styles.exitButton}
+						fill='#000'
+						name='close-outline'
+						onPress={onPressBack}/>
 					<View style={styles.bottomSheet}>
+						{ newPoints.length >= 2 && isLoading &&
+							<Button
+								style={styles.saveRouteButton}
+								onPress={saveNewRoute}
+								size={'small'}
+							>
+								Опубликовать
+							</Button>
+						}
+
+						{ isLoading &&
+							<Spinner />
+						}
+
 						<View style={styles.statusBar}>
 							<View style={styles.timer}>
 								<Text style={styles.statusBarItemTitle}>В ПУТИ</Text>
@@ -192,7 +331,7 @@ const MapScreen = ({ navigation }: any) => {
 							</View>
 							<View style={styles.distance}>
 								<Text style={styles.statusBarItemTitle}>ПРОЙДЕНО</Text>
-								<Text style={styles.statusBarItemContent}>1 км</Text>
+								<Text style={styles.statusBarItemContent}>{routeDistance.toFixed(1)} км</Text>
 							</View>
 							<View style={styles.pointQuant}>
 								<Text style={styles.statusBarItemTitle}>ТОЧКИ ПУТИ</Text>
@@ -200,17 +339,34 @@ const MapScreen = ({ navigation }: any) => {
 							</View>
 						</View>
 
+						<View style={styles.sheetButtonGroup}>
+							<Button
+								style={styles.addPointButton}
+								onPress={addNewPoint}
+								size={'small'}
+							>
+								Добавить точку
+							</Button>
+							{/*<Button*/}
+							{/*	style={styles.addPointButton}*/}
+							{/*	size='small'*/}
+							{/*	onPress={exitAddingRoute}*/}
+							{/*>*/}
+							{/*	Выйти*/}
+							{/*</Button>*/}
+						</View>
+
 						<ScrollView style={styles.pointListBox}>
 							{/*{ pointList &&*/}
 							{/*<PointsPassingList points={pointList} soundList={soundList}/>*/}
 							{/*}*/}
 							{
-								newPoints && newPoints.map((point, index) =>
+								!isEditPoint && newPoints && newPoints.map((point, index) =>
 									<View
 										key={index + point.title}
 										style={styles.pointBox}
 									>
-										<Point title={'title'} photo={getImageSrc(1, 100)} style={{ opacity: 1 }}/>
+										<Point title={point.title} photo={getImageSrc(1, 100)} style={{ opacity: 1 }}/>
 										<View style={styles.pointControl}>
 											<Icon
 												style={{ width: 20, height: 20 }}
@@ -228,22 +384,35 @@ const MapScreen = ({ navigation }: any) => {
 									</View>
 								)
 							}
+							{
+								isEditPoint &&
+									<KeyboardAvoidingView
+										behavior={'padding'}
+										enabled={true}
+									>
+										<Input
+											placeholder={'Title'}
+											style={styles.editInput}
+											value={editTitle}
+											onChangeText={text => setEditTitle(text)}
+										/>
+										<Input
+											style={styles.editInput}
+											multiline={true}
+											numberOfLines={5}
+											placeholder={'Description'}
+											value={editDescription}
+											onChangeText={text => setEditDescription(text)}
+										/>
+										<Button
+											style={styles.addPointButton}
+											onPress={savePoint}
+										>
+											Сохранить
+										</Button>
+									</KeyboardAvoidingView>
+							}
 						</ScrollView>
-						<View style={styles.sheetButtonGroup}>
-							<Button
-								style={styles.addPointButton}
-								onPress={() => setNewPoints(newPoints.concat(EMPTY_POINT))}
-							>
-								Добавить точку
-							</Button>
-							<Button
-								style={styles.addPointButton}
-								size='small'
-								onPress={exitAddingRoute}
-							>
-								Выйти
-							</Button>
-						</View>
 					</View>
 				</BottomSheet>
 				}

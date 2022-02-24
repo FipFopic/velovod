@@ -20,6 +20,13 @@ const themedStyles = StyleService.create({
 		bottom: 50,
 		left: '25%'
 	},
+	locationButton: {
+		width: 50,
+		height: 50,
+		position: 'absolute',
+		top: 10,
+		right: 10
+	},
 	bottomSheet: {
 		width: '100%',
 		display: 'flex',
@@ -77,15 +84,32 @@ const themedStyles = StyleService.create({
 	controlIcon: {
 
 	},
+	editInput: {
+		marginBottom: 20
+	},
 	addPointButton: {
 
+	},
+	topButtonGroup: {
+		width: '100%',
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		backgroundColor: '#ff0000'
+	},
+	saveRouteButton: {
+		alignSelf: 'center'
+	},
+	exitButton: {
+		width: 20,
+		height: 20,
+		marginRight: 20,
+		alignSelf: 'flex-end'
 	},
 	sheetButtonGroup: {
 		width: DEFAULT_BOX_SIZE,
 		display: 'flex',
 		flexDirection: 'row',
-		justifyContent: 'space-around',
-		marginTop: '10%'
+		justifyContent: 'space-around'
 	}
 })
 

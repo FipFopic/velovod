@@ -2,7 +2,7 @@ import React, { FC, useEffect, useState } from 'react'
 import { Text, View } from 'react-native'
 import { PointPass } from '../../screens/routePassing/RoutePassing.helper'
 import { Icon, useStyleSheet } from '@ui-kitten/components'
-import {getImageSrc, getAudioSrc, getMediaSrc} from '../../core/utils/Main.helper'
+import { getImageSrc, getAudioSrc, getMediaSrc } from '../../core/utils/Main.helper'
 import Point from '../Point/Point'
 import themedStyles from './PointPassingList.style'
 import Sound from 'react-native-sound'
@@ -38,19 +38,19 @@ const PointsPassingList: FC<PointsPassingListProps> = ({ points, soundList }) =>
 	}
 
 	return (
-		<View>
+		<View style={{ paddingBottom: 50 }}>
 			{
 				points &&
         points.map(pointInfo =>
-					<Point
-						key={pointInfo.index}
-						style={{ opacity: pointInfo.isPassed ? 1 : 0.5 }}
-        		title={ pointInfo.data.point.title }
-						photo={ getMediaSrc(pointInfo.data.point.media, 'image', 100) }
-					>
-						{
-							// !soundList || soundList[pointInfo.index] &&
-							soundList[pointInfo.index] &&
+        	<Point
+        		key={pointInfo.index}
+        		style={{ opacity: pointInfo.isPassed ? 1 : 0.5 }}
+						title={ pointInfo.data.point.title }
+        		photo={ getMediaSrc(pointInfo.data.point.media, 'image', 100) }
+        	>
+        		{
+        			// !soundList || soundList[pointInfo.index] &&
+        			soundList[pointInfo.index] &&
 							<Icon
 								style={styles.playIcon}
 								width={40}
@@ -63,8 +63,8 @@ const PointsPassingList: FC<PointsPassingListProps> = ({ points, soundList }) =>
 								}
 								onPress={ () => pointInfo.isPassed && _playAudio(pointInfo.index) }
 							/>
-						}
-					</Point>
+        		}
+        	</Point>
         )
 			}
 		</View>

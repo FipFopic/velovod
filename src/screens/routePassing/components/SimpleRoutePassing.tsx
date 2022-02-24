@@ -1,6 +1,6 @@
 import BottomSheet from '@gorhom/bottom-sheet'
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react'
-import { Alert, ScrollView, View } from 'react-native'
+import { Alert, ScrollView, TouchableOpacity, View } from 'react-native'
 import { Button, Icon, Text, useStyleSheet } from '@ui-kitten/components'
 import MapView, { EventUserLocation, Marker, PROVIDER_GOOGLE } from 'react-native-maps'
 import MapViewDirections from 'react-native-maps-directions'
@@ -18,6 +18,7 @@ import {
 import themedStyles from '../RoutePassing.style'
 import Sound from 'react-native-sound'
 import { routeAPI } from '../../../services/route/RouteService'
+import MyLocationButton from '../../../components/MyLocationButton/MyLocationButton'
 
 interface SimpleRoutePassingProps {
 	routeId: number
@@ -33,7 +34,7 @@ const SimpleRoutePassing: FC<SimpleRoutePassingProps> = ({ routeId, points, navi
 	const POINTS_COORDS = useMemo(() => getPointsCoords(POINTS_TO_PASS), [])
 
 	const { data: user } = userAPI.useGetProfileQuery()
-	const [completeRoute, res] = routeAPI.useCompleteRouteMutation()
+	const [completeRoute, { data, error, isLoading }] = routeAPI.useCompleteRouteMutation()
 
 	const [currentLocation, setLocation] = useState<ICoords | null>(null)
 	const [pointList, setPointList] = useState<PointPass[]>(POINTS_TO_PASS)
@@ -42,18 +43,21 @@ const SimpleRoutePassing: FC<SimpleRoutePassingProps> = ({ routeId, points, navi
 	const [mapEventService, setMapEventService] = useState<any>()
 
 	const bottomSheetRef = useRef<BottomSheet>(null)
-	const snapPoints = useMemo(() => ['5%', '50%', '90%'], [])
+	const snapPoints = useMemo(() => ['5%', '50%', '70%'], [])
 
 	useEffect(() => {
-		console.log('!!!routeId', routeId)
-		console.log('!!!res-complete', res.data?.array)
-	}, [res])
+		if (data && !error && !isLoading) navigation.goBack()
+	}, [data])
 
 	const initialRegion = {
 		latitude: +pointList[0].data.point.latitude,
 		longitude: +pointList[0].data.point.longitude,
 		latitudeDelta: 0.0922,
 		longitudeDelta: 0.0421
+	}
+
+	const moveToUserLocation = () => {
+		mapEventService.animateToRegion({ ...currentLocation, latitudeDelta: 0.01, longitudeDelta: 0.01 }, 500)
 	}
 
 	const pointPassed = (idx: number) => {
@@ -79,7 +83,7 @@ const SimpleRoutePassing: FC<SimpleRoutePassingProps> = ({ routeId, points, navi
 	}
 
 	const onPressEnd = () => {
-		completeRoute({ routeId: routeId, polyline: '', countPoints: 13, distance: 8 })
+		completeRoute({ routeId: routeId, polyline: '', countPoints: pointList.length, distance: 10 })
 	}
 
 	const onUserLocationChange = (e: EventUserLocation) => {
@@ -115,7 +119,7 @@ const SimpleRoutePassing: FC<SimpleRoutePassingProps> = ({ routeId, points, navi
 						initialRegion={initialRegion}
 						zoomEnabled={true}
 						showsUserLocation={true}
-						showsMyLocationButton={true}
+						// showsMyLocationButton={true}
 						onUserLocationChange={onUserLocationChange}
 						ref={setMapEventService}
 						// onRegionChange={onRegionChangeComplete}
@@ -138,8 +142,8 @@ const SimpleRoutePassing: FC<SimpleRoutePassingProps> = ({ routeId, points, navi
 						<MapViewDirections
 							apikey={KEYS.GOOGLE.key}
 							optimizeWaypoints={false}
-							origin={POINTS_COORDS[0]}
-							waypoints={ POINTS_COORDS.length > 2 ? POINTS_COORDS.slice(1, -1) : undefined }
+							origin={currentLocation || ''}
+							waypoints={ POINTS_COORDS.length > 2 ? POINTS_COORDS.slice(nextPoint.index, -1) : undefined }
 							mode={'WALKING'}
 							precision={'high'}
 							destination={ POINTS_COORDS[POINTS_COORDS.length - 1] }
@@ -149,21 +153,14 @@ const SimpleRoutePassing: FC<SimpleRoutePassingProps> = ({ routeId, points, navi
 
 					</MapView>
 				</View>
+				<TouchableOpacity style={styles.locationButton} onPress={moveToUserLocation}>
+					<MyLocationButton />
+				</TouchableOpacity>
 				<BottomSheet
 					ref={bottomSheetRef}
 					index={1}
 					snapPoints={snapPoints}
 				>
-					{
-						// pointList[pointList.length - 1].isPassed &&
-						<Button
-							style={styles.endButton}
-							size={'small'}
-							onPress={onPressEnd}
-						>
-							Завершить прохождение
-						</Button>
-					}
 					{
 						!pointList[pointList.length - 1].isPassed &&
 						<Icon
@@ -171,6 +168,16 @@ const SimpleRoutePassing: FC<SimpleRoutePassingProps> = ({ routeId, points, navi
 							fill='#000'
 							name='close-outline'
 							onPress={onPressBack}/>
+					}
+					{
+						pointList[pointList.length - 1].isPassed &&
+						<Button
+							style={styles.endButton}
+							size={'small'}
+							onPress={onPressEnd}
+						>
+							Завершить прохождение
+						</Button>
 					}
 					<ScrollView>
 						<PointsPassingList
