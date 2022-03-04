@@ -1,12 +1,21 @@
 import { StyleService } from '@ui-kitten/components'
-import theme  from '../../theme/themeProps'
+import theme from '../../theme/themeProps'
 
 const { BORDER_RADIUS } = theme
 
 const themedStyles = StyleService.create({
 	pageBox: {
+		height: '100%'
+	},
+	profileBox: {
 		height: '100%',
 		backgroundColor: 'color-basic-700'
+	},
+	loginButtonsBox: {
+		width: '60%',
+		height: '100%',
+		alignSelf: 'center',
+		justifyContent: 'center'
 	},
 	buttonBox: {
 		width: '90%',
@@ -29,7 +38,7 @@ const themedStyles = StyleService.create({
 		width: '100%',
 		display: 'flex',
 		alignItems: 'center',
-		alignSelf: 'center',
+		alignSelf: 'center'
 	},
 	userInfo: {
 		width: '100%',
@@ -62,7 +71,7 @@ const themedStyles = StyleService.create({
 		display: 'flex',
 		alignItems: 'center',
 		flexDirection: 'column',
-		padding: 20,
+		padding: 20
 	},
 	userName: {
 		fontSize: 18,
@@ -127,8 +136,7 @@ const themedStyles = StyleService.create({
 	userTravaledList: {
 		width: '85%',
 		backgroundColor: 'red',
-		display: 'flex',
-		// alignItems: 'flex-end',
+		display: 'flex'
 	}
 })
 

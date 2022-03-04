@@ -103,6 +103,10 @@ const SignupScreen = () => {
 				<View style={styles.socialBox}>
 					<Button
 						style={styles.socialButton}
+						onPress={() => NavigationService.push('Login')}
+					>Регистрация</Button>
+					<Button
+						style={styles.socialButton}
 						accessoryLeft={VKIcon}
 					>Войти через ВКонтакте</Button>
 

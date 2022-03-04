@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from 'react'
-import { View } from 'react-native'
+import { KeyboardAvoidingView, View } from 'react-native'
 import { Button, Input, Text, useStyleSheet } from '@ui-kitten/components'
 import NavigationService from '../../core/utils/Navigation.service'
 import { userAPI } from '../../services/user/UserService'
@@ -46,34 +46,43 @@ const UpdateProfileScreen = ({ route: navigation }: any) => {
 
 	return (
 		<>
-			<View>
-				<Text>Update user</Text>
-				<Input
-					value={name}
-					onChangeText={name => setName(name)}
-				/>
-				<Input
-					value={email}
-					onChangeText={email => setEmail(email)}
-				/>
-				<Text>name {name}</Text>
-				<Text>email {email}</Text>
-				{
-					isLoading &&
-					<Text>isLoding</Text>
-				}
-				{
-					!!error &&
-					<Text>error {error.toString()}</Text>
-				}
-				{
-					data &&
-					<Text>Data {JSON.stringify(data).toString()}</Text>
-				}
-				<Button
-					disabled={!_isFormValid()}
-					onPress={onPressUpdate}
-				>Confirm Update</Button>
+			<View style={styles.backgroundBox}>
+				<KeyboardAvoidingView
+					behavior={'padding'}
+					enabled={true}
+					style={styles.signupBox}>
+					<View style={styles.titleBox}>
+						<Text style={styles.title}>Редактировать данные</Text>
+					</View>
+					<View style={styles.inputGroup}>
+						<Input
+							style={styles.signupInput}
+							placeholder="Имя"
+							value={name}
+							onChangeText={name => setName(name)}
+						/>
+						<Input
+							style={styles.signupInput}
+							placeholder="Email"
+							keyboardType="email-address"
+							value={email}
+							onChangeText={email => setEmail(email)}
+						/>
+					</View>
+					{
+						!!error &&
+						<Text>error {error.toString()}</Text>
+					}
+					<View style={styles.buttonGroup}>
+						<Button
+							style={styles.signupButton}
+							size="medium"
+							disabled={!_isFormValid()}
+							onPress={onPressUpdate}
+						>Сохранить</Button>
+					</View>
+				</KeyboardAvoidingView>
+
 			</View>
 		</>
 	)

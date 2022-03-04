@@ -26,19 +26,25 @@ const ProfileScreen = () => {
 		NavigationService.navigate('UpdateProfile', { user })
 	}
 
+	useEffect(() => {
+		if (!isAuth) {
+			setTimeout(() => NavigationService.navigate('Login'), 1)
+		}
+	}, [])
+
 	if (!isAuth) {
 		return (
 			<>
 				<View style={styles.pageBox}>
-					<Text>
-						Profile
-					</Text>
-					<Button
-						onPress={() => NavigationService.push('Login')}
-					>Go to Login</Button>
-					<Button
-						onPress={() => NavigationService.push('Signup')}
-					>Go to </Button>
+					<View style={styles.loginButtonsBox}>
+						<Button
+							style={{ marginBottom: 40 }}
+							onPress={() => NavigationService.push('Login')}
+						>Войти</Button>
+						<Button
+							onPress={() => NavigationService.push('Signup')}
+						>Регистрация</Button>
+					</View>
 				</View>
 			</>
 		)
@@ -47,7 +53,7 @@ const ProfileScreen = () => {
 	if (isAuth) {
 		return (
 			<>
-				<View style={styles.pageBox}>
+				<View style={styles.profileBox}>
 					<View style={styles.userProfile}>
 						<View style={styles.buttonBox}>
 							{/*<Button*/}
