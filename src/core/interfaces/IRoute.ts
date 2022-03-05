@@ -1,6 +1,7 @@
 import { IUser } from './IUser'
 
 export type RouteType = 'route' | 'quest'
+export type RoutesListType = 'near' | 'default'
 
 export interface IRoute {
 	id: number

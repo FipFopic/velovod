@@ -1,10 +1,16 @@
 import { NativeScrollEvent } from 'react-native'
-import { RouteType } from '../../core/interfaces/IRoute'
+import { RoutesListType, RouteType } from '../../core/interfaces/IRoute'
 
 export interface RouteTab {
 	id: number
 	title: string
 	type: RouteType
+}
+
+export interface RoutesListTypeTab {
+	id: number
+	title: string
+	type: RoutesListType
 }
 
 export const isEndOfScroll = (nativeEvent: NativeScrollEvent): boolean => {

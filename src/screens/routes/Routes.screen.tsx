@@ -9,11 +9,12 @@ import {
 	ViewPager
 } from '@ui-kitten/components'
 import NavigationService from '../../core/utils/Navigation.service'
-import { IRoute, RouteType } from '../../core/interfaces/IRoute'
+import {IRoute, RoutesListType, RouteType} from '../../core/interfaces/IRoute'
 import { routeAPI } from '../../services/route/RouteService'
 import RouteCard from '../../components/RouteCard/RouteCard'
-import { isEndOfScroll, RouteTab } from './Routes.helper'
+import { isEndOfScroll, RoutesListTypeTab, RouteTab } from './Routes.helper'
 import themedStyles from './Routes.style'
+import MapView, {PROVIDER_GOOGLE} from "react-native-maps";
 
 const tabs: RouteTab[] = [
 	{
@@ -28,13 +29,31 @@ const tabs: RouteTab[] = [
 	}
 ]
 
+const routesListType: RoutesListTypeTab[] = [
+	{
+		id: 0,
+		title: 'Рядом',
+		type: 'near'
+	},
+	{
+		id: 1,
+		title: 'Все',
+		type: 'default'
+	}
+]
+
 const RoutesScreen = () => {
 	const styles = useStyleSheet(themedStyles)
 
 	const [activeTab, setActiveTab] = useState<RouteTab>(tabs[0])
+	const [routesListTypeTab, setRoutesListTypeTab] = useState<RoutesListTypeTab>(routesListType[0])
+	const [currentLocation, setCurrentLocation] = useState<any>({})
 	const [routeList, setRouteList] = useState<IRoute[]>([])
+	const [nearRouteList, setNearRouteList] = useState<IRoute[]>([])
 	const [routePage, setRoutePage] = useState(1)
+	const [nearRoutePage, setNearRoutePage] = useState(1)
 	const [isEndRoute, setEndRoute] = useState(false)
+	const [isEndNearRoute, setEndNearRoute] = useState(false)
 	const [questList, setQuestList] = useState<IRoute[]>([])
 	const [questPage, setQuestPage] = useState(1)
 	const [isEndQuest, setEndQuest] = useState(false)
@@ -48,12 +67,20 @@ const RoutesScreen = () => {
 	} = routeAPI.useFetchRoutesQuery({ page: routePage }, { skip: isEndRoute })
 
 	const {
+		data: routesNearChunk,
+		// isLoading: isLoadingRoutes,
+		error: errorNearRoutes
+	} = routeAPI.useFetchRoutesQuery({ latitude: currentLocation.latitude, longitude: currentLocation.longitude, page: nearRoutePage }, { skip: isEndNearRoute })
+
+	const {
 		data: questsChunk,
 		// isLoading: isLoadingQuests,
 		error: errorQuests
 	} = routeAPI.useFetchQuestsQuery({ page: questPage }, { skip: isEndQuest })
 
 	useEffect(() => {
+		if (routesListTypeTab.type === 'near') return
+
 		if (routesChunk?.length) {
 			setRouteList([...routeList, ...routesChunk])
 		} else if (routesChunk?.length === 0) {
@@ -61,6 +88,34 @@ const RoutesScreen = () => {
 		}
 		setLoadingRoutes(false)
 	}, [routesChunk])
+
+	useEffect(() => {
+		if (routesListTypeTab.type === 'default') return
+
+		if (routesNearChunk?.length) {
+			setNearRouteList([...nearRouteList, ...routesNearChunk])
+		} else if (routesNearChunk?.length === 0) {
+			setEndNearRoute(true)
+		}
+		setLoadingRoutes(false)
+	}, [routesNearChunk])
+
+	useEffect(() => {
+		console.log('routesNearChunk', routesNearChunk)
+		console.log('errorNearRoutes', errorNearRoutes)
+	}, [routesNearChunk])
+	// useEffect(() => {
+	// 	switch (routesListTypeTab.type) {
+	// 	case 'near':
+	// 		setNearRoutePage(1)
+	// 		setNearRoutePage(routesNearChunk)
+	// break
+	// case 'default':
+	// 	setRoutePage(1)
+	// 	setRouteList(routesChunk)
+	// 	break
+	// }
+	// }, [routesNearChunk])
 
 	useEffect(() => {
 		if (questsChunk?.length) {
@@ -82,7 +137,11 @@ const RoutesScreen = () => {
 		if (isLoadingRoutes || isLoadingQuests || isEndRoute || isEndQuest || !isEndOfScroll(nativeEvent)) return
 
 		if (activeTab.type === 'route') {
-			setRoutePage(routePage + 1)
+			if (routesListTypeTab.type === 'default') {
+				setRoutePage(routePage + 1)
+			} else {
+				setNearRoutePage(nearRoutePage + 1)
+			}
 			setLoadingRoutes(true)
 		} else if (activeTab.type === 'quest') {
 			setQuestPage(questPage + 1)
@@ -110,14 +169,29 @@ const RoutesScreen = () => {
 								)
 							}
 						</TabBar>
+						<TabBar
+							selectedIndex={routesListTypeTab.id}
+							onSelect={ idx => setRoutesListTypeTab(routesListType[idx]) }
+							style={{
+								width: '50%',
+								backgroundColor: '#ecf0f1'
+							}}
+							indicatorStyle={{
+								display: 'none'
+							}}
+						>
+							{
+								routesListType &&
+								routesListType.map(tab =>
+									<Tab key={tab.id} title={tab.title} />
+								)
+							}
+						</TabBar>
 
 						<ViewPager
 							selectedIndex={activeTab.id}
 							onSelect={ idx => setActiveTab(tabs[idx])}
 						>
-
-							{/* TODO add filter */}
-
 							<ScrollView
 								contentContainerStyle={styles.roadRoutesBox}
 								showsVerticalScrollIndicator={false}
@@ -125,8 +199,19 @@ const RoutesScreen = () => {
 								onScroll={scrollHandler}
 							>
 								{
-									routeList &&
+									routeList && routesListTypeTab.type === 'default' &&
 									routeList.map((route, idx) =>
+										<RouteCard
+											key={`${route.id}-${idx}`}
+											route={route}
+											type='route'
+											onPress={() => onPressRouteCard(route, 'route')}
+										/>
+									)
+								}
+								{
+									nearRouteList && routesListTypeTab.type === 'near' &&
+									nearRouteList.map((route, idx) =>
 										<RouteCard
 											key={`${route.id}-${idx}`}
 											route={route}
@@ -179,6 +264,12 @@ const RoutesScreen = () => {
 							</ScrollView>
 						</ViewPager>
 					</View>
+					<MapView
+						provider={PROVIDER_GOOGLE}
+						showsUserLocation={true}
+						onUserLocationChange={(location) => setCurrentLocation(location.nativeEvent.coordinate)}
+						style={{ display: 'none' }}
+					/>
 				</View>
 			</View>
 		</>
