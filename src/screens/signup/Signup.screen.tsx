@@ -3,9 +3,12 @@ import { KeyboardAvoidingView, View } from 'react-native'
 import { Text, Icon, Input, Button, useStyleSheet } from '@ui-kitten/components'
 import NavigationService from '../../core/utils/Navigation.service'
 import { useAppDispatch, useAppSelector } from '../../core/hooks/redux'
-import { doRegister } from '../../store/auth/ActionCreators'
-import { authActions } from '../../store/auth/AuthSlice'
 import { EMAIL_PATTERN } from '../../config'
+import {
+	removeFromStorage,
+	removeUserFromStorage,
+} from '../../core/utils/Storage.service'
+import { userAPI } from '../../services/user/UserService'
 import themedStyles from './Signup.style'
 
 const FacebookIcon = (props: any) =>
@@ -17,30 +20,42 @@ const VKIcon = (props: any) =>
 const SignupScreen = () => {
 	const styles = useStyleSheet(themedStyles)
 
-	const dispatch = useAppDispatch()
-	const { isLoading, error } = useAppSelector(state => state.auth)
+	const [doRegister, { data, isLoading }] = userAPI.useDoRegisterMutation()
 
 	const [userName, setUserName] = useState('')
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
+	const [error, setError] = useState('')
 
 	useEffect(() => {
-		return () => {
-			dispatch(authActions.resetStore())
-		}
+		removeFromStorage('accessToken')
+		removeFromStorage('refreshToken')
+		removeUserFromStorage()
 	}, [])
 
+	useEffect(() => {
+		console.log('\n\n\n\n\n\n\n\n datadatadatadatadatadatadata', data)
+		if (data?.error) {
+			setError(data.error)
+			return
+		}
+
+		if (data?.id) {
+			return NavigationService.navigate('Profile', { afterLogin: true })
+		}
+
+		setError('')
+	}, [data])
+
 	const _isFormValid = () => {
-		return email.trim() && EMAIL_PATTERN.test(email) && password.trim()
+		return email.trim() && EMAIL_PATTERN.test(email) && password.trim() && userName.trim()
 	}
 
 	const onPressRegister = () => {
-		dispatch(doRegister({ name: userName, email, password }))
+		doRegister({ name: userName, email, password })
 	}
 
 	const onPressNavigateLogin = () => {
-		dispatch(authActions.resetStore())
-
 		return NavigationService.navigate('Login')
 	}
 

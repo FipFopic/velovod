@@ -3,9 +3,7 @@ import { KeyboardAvoidingView, View } from 'react-native'
 import { Button, Icon, Input, Text, useStyleSheet } from '@ui-kitten/components'
 import { removeFromStorage, removeUserFromStorage } from '../../core/utils/Storage.service'
 import NavigationService from '../../core/utils/Navigation.service'
-import { useAppDispatch, useAppSelector } from '../../core/hooks/redux'
-import { doAuthWithVK, doLogin } from '../../store/auth/ActionCreators'
-import { authActions } from '../../store/auth/AuthSlice'
+import { userAPI } from '../../services/user/UserService'
 import { EMAIL_PATTERN } from '../../config'
 import themedStyles from './Login.style'
 
@@ -18,38 +16,43 @@ const VkontakteIcon = (props: any) =>
 const LoginScreen = () => {
 	const styles = useStyleSheet(themedStyles)
 
-	const dispatch = useAppDispatch()
-	const { isLoading, error } = useAppSelector(state => state.auth)
+	const [doLogin, { data, isLoading }] = userAPI.useDoLoginMutation()
 
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
+	const [error, setError] = useState('')
 
 	useEffect(() => {
 		removeFromStorage('accessToken')
+		removeFromStorage('refreshToken')
 		removeUserFromStorage()
 	}, [])
 
 	useEffect(() => {
-		return () => {
-			dispatch(authActions.resetStore())
+		if (data?.error) {
+			setError(data.error)
+			return
 		}
-	}, [])
+
+		if (data?.id) {
+			return NavigationService.navigate('Profile', { afterLogin: true })
+		}
+
+		setError('')
+	}, [data])
 
 	const _isFormValid = () => {
 		return email.trim().toLowerCase() && EMAIL_PATTERN.test(email) && password.trim()
 	}
 
 	const onPressLogin = () => {
-		dispatch(doLogin({ email, password }))
+		doLogin({ email, password })
 	}
 
 	const onPressVKAuth = () => {
-		dispatch(doAuthWithVK())
 	}
 
 	const onPressNavigateRegister = () => {
-		dispatch(authActions.resetStore())
-
 		return NavigationService.navigate('Signup')
 	}
 

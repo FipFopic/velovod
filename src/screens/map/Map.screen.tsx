@@ -12,11 +12,11 @@ import {
 	View
 } from 'react-native'
 import MapView, { Marker, PROVIDER_DEFAULT, PROVIDER_GOOGLE } from 'react-native-maps'
+import { isAuthUser } from '../../core/utils/Storage.service'
 import themedStyles from './Map.style'
 import { StopWatch } from '../../core/utils/StopWatch.helper'
 import Point from '../../../src/components/Point/Point'
 import { getImageSrc } from '../../../src/core/utils/Main.helper'
-import { useAppSelector } from '../../core/hooks/redux'
 import { KEYS } from '../../config'
 import MapViewDirections from 'react-native-maps-directions'
 import MyLocationButton from '../../components/MyLocationButton/MyLocationButton'
@@ -114,7 +114,13 @@ const MapScreen = ({ navigation }: any) => {
 
 	const [addRoute, { data, error, isLoading }] = routeAPI.useAddRouteMutation()
 
-	const { isAuth } = useAppSelector(state => state.auth)
+	const [isAuth, setAuth] = useState(false)
+
+	useEffect(() => {
+		isAuthUser().then(res => {
+			setAuth(res)
+		})
+	}, [])
 
 	const onPressBack = () => {
 		Alert.alert(
@@ -265,7 +271,9 @@ const MapScreen = ({ navigation }: any) => {
 							<Marker
 								key={index + point.title + point.latitude}
 								coordinate={{
+									// @ts-ignore
 									latitude: +point.latitude,
+									// @ts-ignore
 									longitude: +point.longitude
 								}}
 								title={point.title}
@@ -406,6 +414,7 @@ const MapScreen = ({ navigation }: any) => {
 										/>
 										<Button
 											style={styles.addPointButton}
+											// @ts-ignore
 											onPress={savePoint}
 										>
 											Сохранить

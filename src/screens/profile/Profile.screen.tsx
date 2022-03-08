@@ -1,25 +1,27 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Image, View } from 'react-native'
 import { Button, Icon, Text, useStyleSheet } from '@ui-kitten/components'
 import NavigationService from '../../core/utils/Navigation.service'
-import { useAppDispatch, useAppSelector } from '../../core/hooks/redux'
-import { doLogout } from '../../store/auth/ActionCreators'
+import { isAuthUser } from '../../core/utils/Storage.service'
 import { userAPI } from '../../services/user/UserService'
 import themedStyles from './Profile.style'
 import ProgressBar from '../../../src/components/ProgressBar/ProgressBar'
 import { getImageSrc } from '../../core/utils/Main.helper'
 
-const ProfileScreen = () => {
+const ProfileScreen = ({ route: navigation }: any) => {
 	const styles = useStyleSheet(themedStyles)
+	const afterLogin = navigation.params?.afterLogin || false
 
-	const dispatch = useAppDispatch()
-	const { isAuth } = useAppSelector(state => state.auth)
+	const [isAuth, setAuth] = useState(false)
+
 	const { data: user, isLoading, error } = userAPI.useGetProfileQuery(undefined, {
 		skip: !isAuth
 	})
 
+	const [doLogout, { data: dataLogout, isLoading: isLoadingLogout }] = userAPI.useDoLogoutMutation()
+
 	const onPressLogout = () => {
-		dispatch(doLogout())
+		doLogout()
 	}
 
 	const onPressEditProfile = () => {
@@ -27,10 +29,16 @@ const ProfileScreen = () => {
 	}
 
 	useEffect(() => {
-		if (!isAuth) {
-			setTimeout(() => NavigationService.navigate('Login'), 1)
+		isAuthUser().then(res => {
+			setAuth(res)
+		})
+	}, [user, afterLogin])
+
+	useEffect(() => {
+		if (dataLogout) {
+			setAuth(false)
 		}
-	}, [])
+	}, [dataLogout])
 
 	if (!isAuth) {
 		return (
@@ -81,6 +89,7 @@ const ProfileScreen = () => {
 
 						<View style={styles.userInfo}>
 							<View style={styles.userPhotoBox}>
+								{/* @ts-ignore */}
 								<Image style={styles.userPhoto} source={{ uri: getImageSrc(user?.avatar?.id, 100) }} />
 							</View>
 							<View style={styles.userIdentity}>
@@ -106,8 +115,8 @@ const ProfileScreen = () => {
 									<View style={styles.velocoinBox}>
 										<View style={styles.velocoinLabel}>
 											<Text>{user?.count_velocoin?.toString() || '0'}</Text>
-											<Image
-												style={styles.velocoinImage}
+											{/* @ts-ignore */}
+											<Image style={styles.velocoinImage}
 												source={require('../../../src/theme/img/velocoin.png')}/>
 										</View>
 										<Text>велокоины</Text>
@@ -136,7 +145,6 @@ const ProfileScreen = () => {
 						</View>
 
 						<View style={styles.userDetails}>
-
 
 							{/* <View style={styles.userTravaledList}>*/}
 							{/*  <RoadRoutesCard*/}

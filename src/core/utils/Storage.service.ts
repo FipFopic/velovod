@@ -25,6 +25,16 @@ export const getUserFromStorage = async (): Promise<IUser | null> => {
 	return JSON.parse(json)
 }
 
+export const isAuthUser = async (): Promise<boolean> => {
+	const data = [
+		await getUserFromStorage(),
+		await getFromStorage('accessToken'),
+		await getFromStorage('refreshToken')
+	]
+
+	return Promise.all(data).then(data => data.every(value => !!value))
+}
+
 export const removeUserFromStorage = (): Promise<void> => {
 	return removeFromStorage('user')
 }

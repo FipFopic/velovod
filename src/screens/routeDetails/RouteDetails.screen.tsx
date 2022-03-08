@@ -14,6 +14,7 @@ import NavigationService from '../../core/utils/Navigation.service'
 import { IPoint } from '../../core/interfaces/IRoute'
 import { getAudioSrc, getImageSrc, getMediaSrc } from '../../core/utils/Main.helper'
 import { useAppSelector } from '../../core/hooks/redux'
+import { isAuthUser } from '../../core/utils/Storage.service'
 import { routeAPI } from '../../services/route/RouteService'
 import PointsList from '../../components/PointsList/PointsList'
 import OwnerInfo from '../../components/OwnerInfo/OwnerInfo'
@@ -22,7 +23,6 @@ import themedStyles from './RouteDetails.style'
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps'
 import MapViewDirections from 'react-native-maps-directions'
 import { KEYS } from '../../config'
-import { getPointsCoords, getPointsToPass, PointPass } from '../routePassing/RoutePassing.helper'
 import Sound from 'react-native-sound'
 
 const RouteDetailsScreen = ({ route: navigation }: any) => {
@@ -40,7 +40,13 @@ const RouteDetailsScreen = ({ route: navigation }: any) => {
 		)
 	}
 
-	const { isAuth } = useAppSelector(state => state.auth)
+	const [isAuth, setAuth] = useState(false)
+
+	useEffect(() => {
+		isAuthUser().then(res => {
+			setAuth(res)
+		})
+	}, [])
 
 	if (type === 'route') {
 		const { data: route, isLoading, error } = routeAPI.useGetRouteQuery(id)
@@ -88,6 +94,7 @@ const RouteDetailsScreen = ({ route: navigation }: any) => {
 
 			const soundList: Sound[] = []
 
+			// eslint-disable-next-line array-callback-return
 			points.map((point, idx) => {
 				// if (point.point.media[1] === undefined) {
 				// 	return
@@ -210,6 +217,7 @@ const RouteDetailsScreen = ({ route: navigation }: any) => {
 									<MapView
 										style={{ height: '100%', width: '100%' }}
 										provider={PROVIDER_GOOGLE}
+										// @ts-ignore
 										region={initialRegion}
 										zoomEnabled={true}
 										showsUserLocation={true}
