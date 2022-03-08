@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { KeyboardAvoidingView, View } from 'react-native'
 import { Text, Icon, Input, Button, useStyleSheet } from '@ui-kitten/components'
 import NavigationService from '../../core/utils/Navigation.service'
-import { useAppDispatch, useAppSelector } from '../../core/hooks/redux'
 import { EMAIL_PATTERN } from '../../config'
 import {
 	removeFromStorage,
@@ -34,7 +33,6 @@ const SignupScreen = () => {
 	}, [])
 
 	useEffect(() => {
-		console.log('\n\n\n\n\n\n\n\n datadatadatadatadatadatadata', data)
 		if (data?.error) {
 			setError(data.error)
 			return
