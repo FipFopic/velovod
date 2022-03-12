@@ -19,7 +19,8 @@ const VKIcon = (props: any) =>
 const SignupScreen = () => {
 	const styles = useStyleSheet(themedStyles)
 
-	const [doRegister, { data, isLoading }] = userAPI.useDoRegisterMutation()
+	const [doRegister, { data: registerData, isLoading: isLoadingRegister }] = userAPI.useDoRegisterMutation()
+	const [doLogin, { data: loginData, isLoading: isLoadingLogin }] = userAPI.useDoLoginMutation()
 
 	const [userName, setUserName] = useState('')
 	const [email, setEmail] = useState('')
@@ -33,17 +34,23 @@ const SignupScreen = () => {
 	}, [])
 
 	useEffect(() => {
-		if (data?.error) {
-			setError(data.error)
+		if (registerData?.error) {
+			setError(registerData.error)
 			return
 		}
 
-		if (data?.id) {
-			return NavigationService.navigate('Profile', { afterLogin: true })
+		if (registerData?.access_token) {
+			doLogin({ email, password })
 		}
 
 		setError('')
-	}, [data])
+	}, [registerData])
+
+	useEffect(() => {
+		if (loginData?.id) {
+			return NavigationService.navigate('Profile', { afterLogin: true })
+		}
+	}, [loginData])
 
 	const _isFormValid = () => {
 		return email.trim() && EMAIL_PATTERN.test(email) && password.trim() && userName.trim()
@@ -102,9 +109,9 @@ const SignupScreen = () => {
 							appearance="outline"
 							// status="control"
 							size="medium"
-							disabled={ !_isFormValid() || isLoading }
+							disabled={ !_isFormValid() || isLoadingRegister || isLoadingLogin }
 							onPress={onPressRegister}
-						>{ isLoading ? 'Загрузка...' : 'Зарегистрироваться' }</Button>
+						>{ isLoadingRegister || isLoadingLogin ? 'Загрузка...' : 'Зарегистрироваться' }</Button>
 						{/*<Button*/}
 						{/*	style={styles.signupButton}*/}
 						{/*	size="small"*/}
