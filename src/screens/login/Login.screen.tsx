@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { KeyboardAvoidingView, View } from 'react-native'
 import { Button, Icon, Input, Text, useStyleSheet } from '@ui-kitten/components'
+import VKLogin from 'react-native-vkontakte-login'
 import { removeFromStorage, removeUserFromStorage } from '../../core/utils/Storage.service'
 import NavigationService from '../../core/utils/Navigation.service'
 import { userAPI } from '../../services/user/UserService'
@@ -17,6 +18,7 @@ const LoginScreen = () => {
 	const styles = useStyleSheet(themedStyles)
 
 	const [doLogin, { data, isLoading }] = userAPI.useDoLoginMutation()
+	const [doAuthVK, { data: dataAuthVk, isLoading: isLoadingAuthVK }] = userAPI.useDoAuthWithVKMutation()
 
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
@@ -49,7 +51,16 @@ const LoginScreen = () => {
 		doLogin({ email, password })
 	}
 
-	const onPressVKAuth = () => {
+	const getVKToken = async (): Promise<string> => {
+		const auth = await VKLogin.login(['email'])
+		console.log('\n\n\n\n\n\n\n\n\nn\n\n\n\n\n\n =================auth====================: ', auth)
+		return auth.access_token || ''
+	}
+
+	const onPressVKAuth = async () => {
+		const accessToken = await getVKToken()
+		console.log('\n\n\n\n\n\n\n\n\nn\n\n\n\n\n\n =================accessToken====================: ', accessToken)
+		doAuthVK({ accessToken })
 	}
 
 	const onPressNavigateRegister = () => {

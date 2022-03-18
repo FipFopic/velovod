@@ -20,3 +20,8 @@ export interface IRegisterData {
 export interface IOauth {
 	oauth: IToken
 }
+
+export interface IAuthWithVKData {
+	accessToken: string
+	email?: string
+}

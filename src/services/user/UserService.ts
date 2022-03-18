@@ -1,14 +1,13 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/dist/query/react'
-import * as url from 'url'
 import {
 	getFromStorage,
 	removeFromStorage,
-	saveToStorage, saveUserToStorage,
+	saveToStorage, saveUserToStorage
 } from '../../core/utils/Storage.service'
 import { IResponse } from '../../core/interfaces/IResponse'
 import { IToken, IUser } from '../../core/interfaces/IUser'
 import { REST_API, REST_END } from '../../config'
-import { ILoginData, IOauth, IProfileUpdateData, IRegisterData } from './types'
+import { ILoginData, IOauth, IProfileUpdateData, IRegisterData, IAuthWithVKData } from './types'
 
 const CACHING_TIME = 60 * 10
 
@@ -76,6 +75,29 @@ export const userAPI = createApi({
 				await saveToStorage('refreshToken', refreshToken)
 
 				return response.array[0]!.oauth
+			}
+		}),
+
+		doAuthWithVK: build.mutation<any, IAuthWithVKData>({
+			query: ({ accessToken, email }) => {
+				const body: any = {
+					token: accessToken
+				}
+
+				if (email) {
+					body.email = email
+				}
+
+				return {
+					url: REST_END.authFB,
+					method: 'POST',
+					body
+				}
+			},
+			transformResponse: async (response) => {
+				console.log('\n\n\n\n\n\n\n\n\nn\n\n\n\n\n\n =================response====================: ', response)
+
+				return true
 			}
 		}),
 
