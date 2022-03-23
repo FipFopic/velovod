@@ -18,6 +18,7 @@ const LoginScreen = () => {
 	const styles = useStyleSheet(themedStyles)
 
 	const [doLogin, { data, isLoading }] = userAPI.useDoLoginMutation()
+	// const [doAuthVK, { data: dataAuthVk, isLoading: isLoadingAuthVK }] = userAPI.useDoAuthWithVKMutation()
 	const [doAuthVK, { data: dataAuthVk, isLoading: isLoadingAuthVK }] = userAPI.useDoAuthWithVKMutation()
 
 	const [email, setEmail] = useState('')
@@ -43,6 +44,22 @@ const LoginScreen = () => {
 		setError('')
 	}, [data])
 
+	useEffect(() => {
+		if (dataAuthVk?.error) {
+			setError(dataAuthVk.error)
+			return
+		}
+
+		if (dataAuthVk) return NavigationService.navigate('Profile', { afterLogin: true })
+
+		setError('')
+	}, [dataAuthVk])
+
+	useEffect(() => {
+		console.log('\n\n\n\n\n\nisLoadingAuthVK\n\n\n\n', isLoadingAuthVK)
+		console.log('dataAuthVk', dataAuthVk)
+	}, [isLoadingAuthVK])
+
 	const _isFormValid = () => {
 		return email.trim().toLowerCase() && EMAIL_PATTERN.test(email) && password.trim()
 	}
@@ -53,14 +70,18 @@ const LoginScreen = () => {
 
 	const getVKToken = async (): Promise<string> => {
 		const auth = await VKLogin.login(['email'])
-		console.log('\n\n\n\n\n\n\n\n\nn\n\n\n\n\n\n =================auth====================: ', auth)
+		// console.log('\n\n\n\n\n\n\n\n\nn\n\n\n\n\n\n =================auth====================: ', auth)
 		return auth.access_token || ''
+		// VKLogin.login(['email']).then((res) => {
+		// 	console.log('\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n =================RESS====================: ', res)
+		// })
+		// return ''
 	}
 
 	const onPressVKAuth = async () => {
 		const accessToken = await getVKToken()
-		console.log('\n\n\n\n\n\n\n\n\nn\n\n\n\n\n\n =================accessToken====================: ', accessToken)
-		doAuthVK({ accessToken })
+		// console.log('\n\n\n\n\n\n\n\n\nn\n\n\n\n\n\n =================accessToken====================: ', accessToken)
+		console.log('\n\n\n\n\n\n', doAuthVK({ accessToken }))
 	}
 
 	const onPressNavigateRegister = () => {

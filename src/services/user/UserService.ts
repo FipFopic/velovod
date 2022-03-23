@@ -78,7 +78,7 @@ export const userAPI = createApi({
 			}
 		}),
 
-		doAuthWithVK: build.mutation<any, IAuthWithVKData>({
+		doAuthWithVK: build.mutation<IUser | any, IAuthWithVKData>({
 			query: ({ accessToken, email }) => {
 				const body: any = {
 					token: accessToken
@@ -89,16 +89,25 @@ export const userAPI = createApi({
 				}
 
 				return {
-					url: REST_END.authFB,
+					url: REST_END.authVK,
 					method: 'POST',
 					body
 				}
 			},
-			transformResponse: async (response) => {
-				console.log('\n\n\n\n\n\n\n\n\nn\n\n\n\n\n\n =================response====================: ', response)
+			transformResponse: async (response: IResponse<IUser>) => {
+				if (response.status !== 1) {
+					return { error: 'Неизвестная ошибка' }
+				}
 
-				return true
-			}
+				const user = response.array[0]
+				const accessToken = user!.oauth!.access_token
+
+				await saveToStorage('accessToken', accessToken)
+				await saveUserToStorage(user)
+
+				return user
+			},
+			invalidatesTags: ['Profile']
 		}),
 
 		doLogout: build.mutation<boolean, void>({
