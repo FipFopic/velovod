@@ -24,7 +24,7 @@ export const getMediaSrc = (media: Array<any>, type = 'image', size = 100) => {
 
 	const mediaData = media.find((m) => m.media_format.includes(type))
 
-	if (!mediaData) return
+	if (!mediaData) return plugImageSrc
 
 	switch (type) {
 	case 'audio':

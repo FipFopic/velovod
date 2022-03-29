@@ -14,7 +14,7 @@ import { routeAPI } from '../../services/route/RouteService'
 import RouteCard from '../../components/RouteCard/RouteCard'
 import { isEndOfScroll, RoutesListTypeTab, RouteTab } from './Routes.helper'
 import themedStyles from './Routes.style'
-import MapView, {PROVIDER_GOOGLE} from "react-native-maps";
+import MapView, {PROVIDER_GOOGLE} from 'react-native-maps'
 
 const tabs: RouteTab[] = [
 	{
@@ -101,21 +101,17 @@ const RoutesScreen = () => {
 	}, [routesNearChunk])
 
 	useEffect(() => {
-		console.log('routesNearChunk', routesNearChunk)
-		console.log('errorNearRoutes', errorNearRoutes)
-	}, [routesNearChunk])
-	// useEffect(() => {
-	// 	switch (routesListTypeTab.type) {
-	// 	case 'near':
-	// 		setNearRoutePage(1)
-	// 		setNearRoutePage(routesNearChunk)
-	// break
-	// case 'default':
-	// 	setRoutePage(1)
-	// 	setRouteList(routesChunk)
-	// 	break
-	// }
-	// }, [routesNearChunk])
+		switch (routesListTypeTab.type) {
+		case 'near':
+			setNearRoutePage(nearRoutePage)
+			// if (routesNearChunk) setNearRouteList(routesNearChunk)
+			break
+		case 'default':
+			setRoutePage(1)
+			setRouteList(routesChunk)
+			break
+		}
+	}, [routesListTypeTab, routesNearChunk])
 
 	useEffect(() => {
 		if (questsChunk?.length) {
@@ -134,16 +130,19 @@ const RoutesScreen = () => {
 	}
 
 	const scrollHandler = ({ nativeEvent }: NativeSyntheticEvent<NativeScrollEvent>) => {
-		if (isLoadingRoutes || isLoadingQuests || isEndRoute || isEndQuest || !isEndOfScroll(nativeEvent)) return
+		if (isLoadingRoutes || isLoadingQuests || !isEndOfScroll(nativeEvent)) return
 
 		if (activeTab.type === 'route') {
 			if (routesListTypeTab.type === 'default') {
+				if (isEndRoute) return
 				setRoutePage(routePage + 1)
 			} else {
+				if (isEndNearRoute) return
 				setNearRoutePage(nearRoutePage + 1)
 			}
 			setLoadingRoutes(true)
 		} else if (activeTab.type === 'quest') {
+			if (isEndQuest) return
 			setQuestPage(questPage + 1)
 			setLoadingQuests(true)
 		}
@@ -169,38 +168,40 @@ const RoutesScreen = () => {
 								)
 							}
 						</TabBar>
-						<TabBar
-							selectedIndex={routesListTypeTab.id}
-							onSelect={ idx => setRoutesListTypeTab(routesListType[idx]) }
-							style={{
-								width: '50%',
-								backgroundColor: '#ecf0f1'
-							}}
-							indicatorStyle={{
-								display: 'none'
-							}}
-						>
-							{
-								routesListType &&
-								routesListType.map(tab =>
-									<Tab key={tab.id} title={tab.title} />
-								)
-							}
-						</TabBar>
 
 						<ViewPager
 							selectedIndex={activeTab.id}
 							onSelect={ idx => setActiveTab(tabs[idx])}
 						>
+
 							<ScrollView
 								contentContainerStyle={styles.roadRoutesBox}
 								showsVerticalScrollIndicator={false}
 								scrollEventThrottle={1000}
 								onScroll={scrollHandler}
 							>
+								<TabBar
+									selectedIndex={routesListTypeTab.id}
+									onSelect={idx => setRoutesListTypeTab(routesListType[idx])}
+									style={{
+										width: '50%',
+										backgroundColor: '#ecf0f1',
+										display: activeTab.id ? 'none' : 'flex'
+									}}
+									indicatorStyle={{
+										display: 'none'
+									}}
+								>
+									{
+										routesListType &&
+										routesListType.map(tab =>
+											<Tab key={tab.id} title={tab.title}/>
+										)
+									}
+								</TabBar>
 								{
-									routeList && routesListTypeTab.type === 'default' &&
-									routeList.map((route, idx) =>
+									nearRouteList && routesListTypeTab.type === 'near' &&
+									nearRouteList.map((route, idx) =>
 										<RouteCard
 											key={`${route.id}-${idx}`}
 											route={route}
@@ -210,8 +211,8 @@ const RoutesScreen = () => {
 									)
 								}
 								{
-									nearRouteList && routesListTypeTab.type === 'near' &&
-									nearRouteList.map((route, idx) =>
+									routeList && routesListTypeTab.type === 'default' &&
+									routeList.map((route, idx) =>
 										<RouteCard
 											key={`${route.id}-${idx}`}
 											route={route}
@@ -237,6 +238,7 @@ const RoutesScreen = () => {
 							<ScrollView
 								contentContainerStyle={styles.roadRoutesBox}
 								showsVerticalScrollIndicator={false}
+								onScroll={scrollHandler}
 							>
 								{
 									questList &&
@@ -262,6 +264,8 @@ const RoutesScreen = () => {
 									</View>
 								}
 							</ScrollView>
+
+
 						</ViewPager>
 					</View>
 					<MapView

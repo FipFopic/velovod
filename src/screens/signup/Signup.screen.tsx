@@ -5,7 +5,7 @@ import NavigationService from '../../core/utils/Navigation.service'
 import { EMAIL_PATTERN } from '../../config'
 import {
 	removeFromStorage,
-	removeUserFromStorage,
+	removeUserFromStorage
 } from '../../core/utils/Storage.service'
 import { userAPI } from '../../services/user/UserService'
 import themedStyles from './Signup.style'
@@ -117,11 +117,11 @@ const SignupScreen = () => {
 					<Button
 						style={styles.socialButton}
 						onPress={() => NavigationService.push('Login')}
-					>Регистрация</Button>
-					<Button
-						style={styles.socialButton}
-						accessoryLeft={VKIcon}
-					>Войти через ВКонтакте</Button>
+					>Вход</Button>
+					{/*<Button*/}
+					{/*	style={styles.socialButton}*/}
+					{/*	accessoryLeft={VKIcon}*/}
+					{/*>Войти через ВКонтакте</Button>*/}
 
 					{/*<Button*/}
 					{/*	style={styles.socialButton}*/}

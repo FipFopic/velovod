@@ -145,11 +145,11 @@ const LoginScreen = () => {
 						style={styles.socialButton}
 						onPress={() => NavigationService.push('Signup')}
 					>Регистрация</Button>
-					<Button
-						style={styles.socialButton}
-						accessoryLeft={VkontakteIcon}
-						onPress={onPressVKAuth}
-					>Войти через ВКонтакте</Button>
+					{/*<Button*/}
+					{/*	style={styles.socialButton}*/}
+					{/*	accessoryLeft={VkontakteIcon}*/}
+					{/*	onPress={onPressVKAuth}*/}
+					{/*>Войти через ВКонтакте</Button>*/}
 
 					{/*<Button*/}
 					{/*	style={styles.socialButton}*/}

@@ -10,7 +10,7 @@ const themedStyles = StyleService.create({
 	roadRoutesBox: {
 		display: 'flex',
 		alignItems: 'center',
-		paddingBottom: 80
+		paddingBottom: 130
 	},
 	bottomSpinner: {
 		marginTop: 15
