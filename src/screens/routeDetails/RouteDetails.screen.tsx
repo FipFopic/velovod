@@ -204,6 +204,7 @@ const RouteDetailsScreen = ({ route: navigation }: any) => {
 								<ScrollView
 									contentContainerStyle={styles.slideContainer}
 									showsVerticalScrollIndicator={false}
+									nestedScrollEnabled={true}
 								>
 									<PointsList
 										points={points}
