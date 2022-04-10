@@ -114,14 +114,6 @@ const MapScreen = ({ navigation }: any) => {
 
 	const [addRoute, { data, error, isLoading }] = routeAPI.useAddRouteMutation()
 
-	const [isAuth, setAuth] = useState(false)
-
-	useEffect(() => {
-		isAuthUser().then(res => {
-			setAuth(res)
-		})
-	}, [])
-
 	const onPressBack = () => {
 		Alert.alert(
 			'Завершить добавление маршрута?',
@@ -130,7 +122,7 @@ const MapScreen = ({ navigation }: any) => {
 				{
 					text: 'Покинуть',
 					style: 'destructive',
-					onPress: navigation.goBack
+					onPress: exitAddingRoute
 				},
 				{
 					text: 'Отмена'
@@ -189,10 +181,19 @@ const MapScreen = ({ navigation }: any) => {
 		mapEventService.animateToRegion({ ...currentLocation, latitudeDelta: 0.01, longitudeDelta: 0.01 }, 500)
 	}
 
+	const createRouteHandler = () => {
+		isAuthUser().then(res => {
+			if (res) setIsAddingRoute(true)
+		})
+	}
+
 	const addNewPoint = () => {
-		const pointToAdd = EMPTY_POINT
-		pointToAdd.latitude = currentLocation.latitude + 0.01
-		pointToAdd.longitude = currentLocation.longitude + 0.01
+		const pointToAdd: INewPoint = {
+			title: 'Новая точка',
+			description: ''
+		}
+		pointToAdd.latitude = currentLocation.latitude
+		pointToAdd.longitude = currentLocation.longitude
 		setNewPoints(newPoints.concat(pointToAdd))
 	}
 
@@ -303,8 +304,8 @@ const MapScreen = ({ navigation }: any) => {
 					<MyLocationButton />
 				</TouchableOpacity>
 
-				{!isAddingRoute && isAuth &&
-					<Button style={styles.createRouteButton} onPress={() => setIsAddingRoute(true)}>Создать маршрут</Button>
+				{!isAddingRoute &&
+					<Button style={styles.createRouteButton} onPress={createRouteHandler}>Создать маршрут</Button>
 				}
 
 				{ isAddingRoute &&
@@ -318,15 +319,6 @@ const MapScreen = ({ navigation }: any) => {
 						name='close-outline'
 						onPress={onPressBack}/>
 					<View style={styles.bottomSheet}>
-						{ newPoints.length >= 2 && isLoading &&
-							<Button
-								style={styles.saveRouteButton}
-								onPress={saveNewRoute}
-								size={'small'}
-							>
-								Опубликовать
-							</Button>
-						}
 
 						{ isLoading &&
 							<Spinner />
@@ -348,6 +340,14 @@ const MapScreen = ({ navigation }: any) => {
 						</View>
 
 						<View style={styles.sheetButtonGroup}>
+							<Button
+								style={styles.saveRouteButton}
+								onPress={saveNewRoute}
+								size={'small'}
+								disabled={!(newPoints.length >= 2 && !isLoading)}
+							>
+								Опубликовать
+							</Button>
 							<Button
 								style={styles.addPointButton}
 								onPress={addNewPoint}
