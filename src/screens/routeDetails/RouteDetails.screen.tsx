@@ -80,11 +80,10 @@ const RouteDetailsScreen = ({ route: navigation }: any) => {
 		}, [points])
 
 		const onPressStartRoute = () => {
-			if (!isAuth) {
+			isAuthUser().then(res => {
+				if (res) return downloadRoute()
 				return NavigationService.navigate('ProfileStack')
-			}
-
-			return downloadRoute()
+			})
 		}
 
 		const downloadRoute = () => {
@@ -201,22 +200,26 @@ const RouteDetailsScreen = ({ route: navigation }: any) => {
 							onSelect={setTabIndex}
 						>
 							<View style={styles.infoSlide}>
-								<ScrollView
-									contentContainerStyle={styles.slideContainer}
-									showsVerticalScrollIndicator={false}
-									nestedScrollEnabled={true}
+								{/*<ScrollView*/}
+								{/*	contentContainerStyle={{...styles.slideContainer, ...{height: points.length * 200}}}*/}
+								{/*	showsVerticalScrollIndicator={false}*/}
+								{/*	nestedScrollEnabled={true}*/}
+								{/*>*/}
+								<View
+									style={{...styles.slideContainer, ...{height: points.length * 80}}}
 								>
 									<PointsList
 										points={points}
 									/>
-								</ScrollView>
+								</View>
+								{/*</ScrollView>*/}
 							</View>
 
 							<View style={styles.infoSlide}>
 								<View style={styles.slideContainer}>
 									{!isLoading && !error && points.length > 0 &&
 									<MapView
-										style={{ height: '100%', width: '100%' }}
+										style={{ height: 500, width: '100%' }}
 										provider={PROVIDER_GOOGLE}
 										// @ts-ignore
 										region={initialRegion}

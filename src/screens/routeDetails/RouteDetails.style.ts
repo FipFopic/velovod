@@ -49,7 +49,7 @@ const themedStyles = StyleService.create({
 	},
 	infoSlide: {
 		// backgroundColor: 'color-basic-300',
-		height: 600,
+		// height: 600,
 		// paddingBottom: 100,
 		display: 'flex',
 		alignItems: 'center',
