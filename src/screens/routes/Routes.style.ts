@@ -2,7 +2,8 @@ import { StyleService } from '@ui-kitten/components'
 
 const themedStyles = StyleService.create({
 	pageBox: {
-		height: '100%'
+		height: '100%',
+		backgroundColor: 'color-basic-100'
 	},
 	contentBox: {
 		height: '100%'

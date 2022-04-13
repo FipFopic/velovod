@@ -7,6 +7,7 @@ import NavigationService from '../../core/utils/Navigation.service'
 import { userAPI } from '../../services/user/UserService'
 import { EMAIL_PATTERN } from '../../config'
 import themedStyles from './Login.style'
+import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
 
 const FacebookIcon = (props: any) =>
 	<Icon name='facebook' {...props} />
@@ -90,10 +91,10 @@ const LoginScreen = () => {
 
 	return (
 		<>
-			<View style={styles.backgroundBox}>
-				<KeyboardAvoidingView
-					behavior={'padding'}
-					enabled={true}
+			<KeyboardAwareScrollView contentContainerStyle={styles.backgroundBox}>
+				<View
+					// behavior={'padding'}
+					// enabled={true}
 					style={styles.loginBox}>
 					<View style={styles.titleBox}>
 						<Text style={styles.title}>
@@ -138,7 +139,7 @@ const LoginScreen = () => {
 						{/*	onPress={onPressNavigateRegister}*/}
 						{/*>Регистрация</Button>*/}
 					</View>
-				</KeyboardAvoidingView>
+				</View>
 
 				<View style={styles.socialBox}>
 					<Button
@@ -157,7 +158,7 @@ const LoginScreen = () => {
 					{/*	// onPress={doLoginWithFB}*/}
 					{/*>Войти через Facebook</Button>*/}
 				</View>
-			</View>
+			</KeyboardAwareScrollView>
 		</>
 	)
 }

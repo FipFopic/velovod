@@ -56,6 +56,7 @@ const RouteDetailsScreen = ({ route: navigation }: any) => {
 		const [initialRegion, setInitialRegion] = useState({})
 		const [mapEventService, setMapEventService] = useState<any>()
 		const [isAudioLoading, setAudioLoading] = useState(false)
+		const [loadProgress, setLoadProgress] = useState(0)
 
 		const POINTS_COORDS = points.map((point) => {
 			return {
@@ -95,24 +96,31 @@ const RouteDetailsScreen = ({ route: navigation }: any) => {
 
 			// eslint-disable-next-line array-callback-return
 			points.map((point, idx) => {
-				// if (point.point.media[1] === undefined) {
-				// 	return
-				// }
-
 				const audioSrc = getMediaSrc(point.point.media, 'audio')
 				if (!audioSrc) {
 					return ''
 				}
 
-				soundList[idx] = new Sound(
-					audioSrc,
-					undefined,
-					err => err &&
-						console.warn(`error in downloading audio: ${point.point.media[1].id}  file: `, err)
-				)
+				if (!point.point.media[0] || !point.point.media.some(media => media.media_format.includes('audio'))) {
+					soundList[idx] = 0
+				} else {
+					soundList[idx] = new Sound(
+						audioSrc,
+						undefined,
+						err => err &&
+							console.warn(`error in downloading audio: ${point?.point?.media[1]?.id}  file: `, err)
+					)
+				}
 
 				const interval = setInterval(() => {
-					if (!soundList.every(sound => sound.isLoaded())) {
+					const isLoaded = soundList.every(sound => (!sound || sound.isLoaded()))
+
+					if (!isLoaded) {
+						const loadingList = soundList.filter((sound) => sound)
+						const loaded = loadingList.filter((sound) => sound.isLoaded())
+						console.log('loadingList', loadingList)
+						console.log('loaded', loaded)
+						setLoadProgress((loaded.length / loadingList.length * 100).toFixed(1))
 						return
 					}
 
@@ -126,7 +134,7 @@ const RouteDetailsScreen = ({ route: navigation }: any) => {
 
 		return (
 			<>
-				<View>
+				<View style={styles.pageBox}>
 					<ScrollView showsVerticalScrollIndicator={false}>
 						<View style={styles.roadDetailsBox}>
 
@@ -146,9 +154,16 @@ const RouteDetailsScreen = ({ route: navigation }: any) => {
 									</View>
 								}
 								{
-									(isLoading || isAudioLoading) &&
-									<View>
+									isLoading &&
+									<View style={styles.beginSpinner}>
 										<Spinner />
+									</View>
+								}
+								{
+									isAudioLoading &&
+									<View style={styles.beginSpinner}>
+										<Spinner />
+										<Text>Загрузка аудио {loadProgress}%</Text>
 									</View>
 								}
 								{

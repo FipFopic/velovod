@@ -50,7 +50,7 @@ const PointsPassingList: FC<PointsPassingListProps> = ({ points, soundList }) =>
         	>
         		{
         			// !soundList || soundList[pointInfo.index] &&
-        			soundList[pointInfo.index] &&
+        			!!soundList[pointInfo.index] &&
 							<Icon
 								style={styles.playIcon}
 								width={40}

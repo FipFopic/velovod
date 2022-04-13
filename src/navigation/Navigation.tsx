@@ -53,7 +53,7 @@ const RoutesScreenStack = () => {
 				component={RouteDetailsScreen}
 				options={{
 					headerStyle: {
-						backgroundColor: '#ecf0f1'
+						// backgroundColor: '#ecf0f1'
 					},
 					title: 'О маршруте'
 				}}
@@ -83,7 +83,7 @@ const MapScreenStack = () => {
 				component={MapScreen}
 				options={{
 					headerStyle: {
-						backgroundColor: '#ecf0f1'
+						// backgroundColor: '#ecf0f1'
 					},
 					title: 'Создание маршрута'
 				}}
@@ -149,7 +149,7 @@ const Navigation = () => {
 					tabBarHideOnKeyboard: true
 				})}
 				sceneContainerStyle={
-					Platform.OS === 'ios' ? { paddingTop: 50 } : {}
+					Platform.OS === 'ios' ? { paddingTop: 50, backgroundColor: 'color-basic-100' } : { backgroundColor: 'color-basic-100' }
 				}
 			>
 				<TabNavigation.Screen

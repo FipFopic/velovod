@@ -95,7 +95,7 @@ const MapScreen = ({ navigation }: any) => {
 	const [isAddingRoute, setIsAddingRoute] = useState(false)
 	const [newPoints, setNewPoints] = useState<Array<INewPoint>>([])
 
-	const sheetPositions = ['25%', '50%', '90%']
+	const sheetPositions = ['35%', '50%', '90%']
 
 	const bottomSheetRef = useRef<BottomSheet>(null)
 	const snapPoints = useMemo(() => sheetPositions, [])
@@ -183,7 +183,11 @@ const MapScreen = ({ navigation }: any) => {
 
 	const createRouteHandler = () => {
 		isAuthUser().then(res => {
-			if (res) setIsAddingRoute(true)
+			if (res) {
+				setIsAddingRoute(true)
+			} else {
+				NavigationService.navigate('ProfileStack')
+			}
 		})
 	}
 
@@ -374,14 +378,16 @@ const MapScreen = ({ navigation }: any) => {
 										key={index + point.title}
 										style={styles.pointBox}
 									>
-										<Point title={point.title} photo={getImageSrc(1, 100)} style={{ opacity: 1 }}/>
+										<TouchableOpacity onPress={() => editPoint(index)}>
+											<Point title={point.title} photo={getImageSrc(1, 100)} style={{ opacity: 1 }}/>
+										</TouchableOpacity>
 										<View style={styles.pointControl}>
-											<Icon
-												style={{ width: 20, height: 20 }}
-												fill='#000'
-												name='edit-outline'
-												onPress={() => editPoint(index)}
-											/>
+											{/*<Icon*/}
+											{/*	style={{ width: 20, height: 20 }}*/}
+											{/*	fill='#000'*/}
+											{/*	name='edit-outline'*/}
+											{/*	onPress={() => editPoint(index)}*/}
+											{/*/>*/}
 											<Icon
 												style={{ width: 20, height: 20 }}
 												fill='#000'
@@ -397,6 +403,7 @@ const MapScreen = ({ navigation }: any) => {
 									<KeyboardAvoidingView
 										behavior={'padding'}
 										enabled={true}
+										style={{marginTop: 20}}
 									>
 										<Input
 											placeholder={'Title'}

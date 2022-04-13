@@ -31,6 +31,7 @@ const ProfileScreen = ({ route: navigation }: any) => {
 	useEffect(() => {
 		isAuthUser().then(res => {
 			setAuth(res)
+			if (!res) NavigationService.push('Login')
 		})
 	}, [user, afterLogin])
 

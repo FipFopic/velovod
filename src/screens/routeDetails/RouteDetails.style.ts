@@ -2,6 +2,9 @@ import { StyleService } from '@ui-kitten/components'
 import theme from '../../theme/themeProps'
 
 const themedStyles = StyleService.create({
+	pageBox: {
+		backgroundColor: 'color-basic-100'
+	},
 	roadDetailsBox: {
 		width: theme.DEFAULT_BOX_SIZE,
 		alignSelf: 'center',
@@ -17,6 +20,11 @@ const themedStyles = StyleService.create({
 	beginButton: {
 		marginTop: 15,
 		marginBottom: 15
+	},
+	beginSpinner: {
+		marginTop: 15,
+		marginBottom: 15,
+		alignItems: 'center'
 	},
 	roadImage: {
 		width: '100%',
@@ -37,7 +45,7 @@ const themedStyles = StyleService.create({
 	},
 	tabBar: {
 		alignSelf: 'center',
-		backgroundColor: 'color-basic-200',
+		backgroundColor: 'color-basic-100',
 	},
 	tabIndicator: {
 		height: 2

@@ -157,9 +157,6 @@ const RoutesScreen = () => {
 						<TabBar
 							selectedIndex={activeTab.id}
 							onSelect={ idx => setActiveTab(tabs[idx]) }
-							style={{
-								backgroundColor: '#ecf0f1'
-							}}
 						>
 							{
 								tabs &&
@@ -185,7 +182,7 @@ const RoutesScreen = () => {
 									onSelect={idx => setRoutesListTypeTab(routesListType[idx])}
 									style={{
 										width: '50%',
-										backgroundColor: '#ecf0f1',
+										// backgroundColor: '#ecf0f1',
 										display: activeTab.id ? 'none' : 'flex'
 									}}
 									indicatorStyle={{

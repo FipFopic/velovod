@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { KeyboardAvoidingView, View } from 'react-native'
+import {KeyboardAvoidingView, ScrollView, View} from 'react-native'
 import { Text, Icon, Input, Button, useStyleSheet } from '@ui-kitten/components'
 import NavigationService from '../../core/utils/Navigation.service'
 import { EMAIL_PATTERN } from '../../config'
@@ -9,6 +9,7 @@ import {
 } from '../../core/utils/Storage.service'
 import { userAPI } from '../../services/user/UserService'
 import themedStyles from './Signup.style'
+import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
 
 const FacebookIcon = (props: any) =>
 	<Icon name='facebook' {...props} />
@@ -66,11 +67,14 @@ const SignupScreen = () => {
 
 	return (
 		<>
-			<View style={styles.backgroundBox}>
-				<KeyboardAvoidingView
-					behavior={'padding'}
-					enabled={true}
-					style={styles.signupBox}>
+			<KeyboardAwareScrollView contentContainerStyle={styles.backgroundBox}>
+				<View
+					// behavior={'position'}
+					// behavior={'padding'}
+					// enabled={true}
+					style={styles.signupBox}
+					// keyboardVerticalOffset={10}
+				>
 					<View style={styles.titleBox}>
 						<Text style={styles.title}>Регистрация</Text>
 					</View>
@@ -118,24 +122,24 @@ const SignupScreen = () => {
 						{/*	onPress={onPressNavigateLogin}*/}
 						{/*>Вход</Button>*/}
 					</View>
-				</KeyboardAvoidingView>
+				</View>
 
 				<View style={styles.socialBox}>
 					<Button
 						style={styles.socialButton}
 						onPress={() => NavigationService.push('Login')}
 					>Регистрация</Button>
-					<Button
-						style={styles.socialButton}
-						accessoryLeft={VKIcon}
-					>Войти через ВКонтакте</Button>
+					{/*<Button*/}
+					{/*	style={styles.socialButton}*/}
+					{/*	accessoryLeft={VKIcon}*/}
+					{/*>Войти через ВКонтакте</Button>*/}
 
 					{/*<Button*/}
 					{/*	style={styles.socialButton}*/}
 					{/*	accessoryLeft={FacebookIcon}*/}
 					{/*>Войти через Facebook</Button>*/}
 				</View>
-			</View>
+			</KeyboardAwareScrollView>
 		</>
 	)
 }
