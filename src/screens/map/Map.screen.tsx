@@ -114,7 +114,7 @@ const MapScreen = ({ navigation }: any) => {
 
 	const [addRoute, { data, error, isLoading }] = routeAPI.useAddRouteMutation()
 
-	const onPressBack = () => {
+	const onPressClose = () => {
 		Alert.alert(
 			'Завершить добавление маршрута?',
 			'Весь прогресс будет утерян!',
@@ -165,14 +165,6 @@ const MapScreen = ({ navigation }: any) => {
 		})
 	}, [navigation, isAddingRoute])
 
-	//onPressBack
-	useEffect(() => {
-		BackHandler.addEventListener('hardwareBackPress', onPressBack)
-		return () => {
-			BackHandler.removeEventListener('hardwareBackPress', onPressBack)
-		}
-	}, [])
-
 	useEffect(() => {
 		if (currentLocation.longitude) moveToUserLocation()
 	}, [currentLocation])
@@ -185,6 +177,7 @@ const MapScreen = ({ navigation }: any) => {
 		isAuthUser().then(res => {
 			if (res) {
 				setIsAddingRoute(true)
+				BackHandler.addEventListener('hardwareBackPress', onPressClose)
 			} else {
 				NavigationService.navigate('ProfileStack')
 			}
@@ -196,8 +189,8 @@ const MapScreen = ({ navigation }: any) => {
 			title: 'Новая точка',
 			description: ''
 		}
-		pointToAdd.latitude = currentLocation.latitude
-		pointToAdd.longitude = currentLocation.longitude
+		pointToAdd.latitude = currentLocation.latitude || 0.01
+		pointToAdd.longitude = currentLocation.longitude || 0.01
 		setNewPoints(newPoints.concat(pointToAdd))
 	}
 
@@ -231,6 +224,7 @@ const MapScreen = ({ navigation }: any) => {
 	const exitAddingRoute = () => {
 		setNewPoints([])
 		setIsAddingRoute(false)
+		BackHandler.removeEventListener('hardwareBackPress', onPressClose)
 	}
 
 	const saveNewRoute = () => {
@@ -321,7 +315,7 @@ const MapScreen = ({ navigation }: any) => {
 						style={styles.exitButton}
 						fill='#000'
 						name='close-outline'
-						onPress={onPressBack}/>
+						onPress={onPressClose}/>
 					<View style={styles.bottomSheet}>
 
 						{ isLoading &&
@@ -403,7 +397,7 @@ const MapScreen = ({ navigation }: any) => {
 									<KeyboardAvoidingView
 										behavior={'padding'}
 										enabled={true}
-										style={{marginTop: 20}}
+										style={{ marginTop: 20 }}
 									>
 										<Input
 											placeholder={'Title'}

@@ -43,7 +43,7 @@ const SimpleRoutePassing: FC<SimpleRoutePassingProps> = ({ routeId, points, navi
 	const [mapEventService, setMapEventService] = useState<any>()
 
 	const bottomSheetRef = useRef<BottomSheet>(null)
-	const snapPoints = useMemo(() => ['5%', '50%', '70%'], [])
+	const snapPoints = useMemo(() => ['25%', '50%', '70%'], [])
 
 	useEffect(() => {
 		if (data && !error && !isLoading) navigation.goBack()
