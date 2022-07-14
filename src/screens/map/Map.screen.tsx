@@ -132,6 +132,9 @@ const MapScreen = ({ navigation }: any) => {
 		return false
 	}
 
+	useEffect(() => {
+	})
+
 	//stopwatch
 	useEffect(() => {
 		if (!isAddingRoute) {
@@ -167,9 +170,11 @@ const MapScreen = ({ navigation }: any) => {
 
 	useEffect(() => {
 		if (currentLocation.longitude) moveToUserLocation()
+		console.log('currentLocation', currentLocation)
 	}, [currentLocation])
 
 	const moveToUserLocation = () => {
+		console.log('currentLocation', currentLocation)
 		mapEventService.animateToRegion({ ...currentLocation, latitudeDelta: 0.01, longitudeDelta: 0.01 }, 500)
 	}
 
@@ -255,6 +260,7 @@ const MapScreen = ({ navigation }: any) => {
 					provider={PROVIDER_GOOGLE}
 					loadingEnabled={true}
 					showsCompass={true}
+					showsMyLocationButton={false}
 					showsUserLocation={true}
 					onUserLocationChange={(location) => setCurrentLocation(location.nativeEvent.coordinate)}
 					initialRegion={{

@@ -41,6 +41,7 @@ const themedStyles = StyleService.create({
 	},
 	description: {
 		fontWeight: '500',
+		fontColor: '#000'
 		// textAlign: 'center'
 	},
 	tabBar: {

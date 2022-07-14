@@ -32,6 +32,7 @@ const themedStyles = StyleService.create({
 		fontSize: 15,
 		flexWrap: 'nowrap',
 		fontWeight: '500',
+		fontColor: 'color-primary-200',
 		marginRight: BORDER_RADIUS/2,
 	}
 })

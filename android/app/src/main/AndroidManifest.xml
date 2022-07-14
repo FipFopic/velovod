@@ -2,6 +2,7 @@
   package="com.velovod">
 
     <uses-permission android:name="android.permission.INTERNET" />
+		<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
       android:name=".MainApplication"
@@ -21,5 +22,9 @@
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
       </activity>
-    </application>
+			<meta-data
+				android:name="com.google.android.maps.v2.API_KEY"
+				android:value="AIzaSyBw88d3ysoIDJUt1VotBvi_wbMjBzXeg_Q" />
+		</application>
+
 </manifest>

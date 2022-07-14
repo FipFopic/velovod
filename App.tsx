@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from 'react'
+import React, {FC, useEffect, useState} from 'react'
 import { Provider } from 'react-redux'
 import { ApplicationProvider, IconRegistry } from '@ui-kitten/components'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
@@ -14,14 +14,21 @@ import ApplicationSetup from './src/components/ApplicationSetup/ApplicationSetup
 import { KeyboardAvoidingView } from 'react-native'
 import 'react-native-gesture-handler'
 import SplashScreen from 'react-native-splash-screen'
+import { requestFineGeoPermission } from './src/core/utils/permissions.helper'
 
 const App: FC = () => {
 	const store = setupStore()
+	const [isPermissions, setPermissions] = useState(false)
 
-	//hide splash screen after load
+	//hide splash screen after load and getPermissions
 	useEffect(() => {
 		SplashScreen.hide()
+		requestFineGeoPermission().then((res) => setPermissions(res))
 	})
+
+	useEffect(() => {
+		if (!isPermissions) requestFineGeoPermission().then((res) => setPermissions(res))
+	}, [isPermissions])
 
 	return (
 		<>

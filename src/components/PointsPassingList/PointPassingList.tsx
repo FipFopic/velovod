@@ -42,15 +42,15 @@ const PointsPassingList: FC<PointsPassingListProps> = ({ points, soundList }) =>
 			{
 				points &&
         points.map(pointInfo =>
-        	<Point
-        		key={pointInfo.index}
-        		style={{ opacity: pointInfo.isPassed ? 1 : 0.5 }}
+					<Point
+						key={pointInfo.index}
+						style={{ opacity: pointInfo.isPassed ? 1 : 0.5 }}
 						title={ pointInfo.data.point.title }
-        		photo={ getMediaSrc(pointInfo.data.point.media, 'image', 100) }
-        	>
-        		{
-        			// !soundList || soundList[pointInfo.index] &&
-        			!!soundList[pointInfo.index] &&
+						photo={ getMediaSrc(pointInfo.data.point.media, 'image', 100) }
+					>
+						{
+							// !soundList || soundList[pointInfo.index] &&
+							!!soundList[pointInfo.index] &&
 							<Icon
 								style={styles.playIcon}
 								width={40}
@@ -61,10 +61,11 @@ const PointsPassingList: FC<PointsPassingListProps> = ({ points, soundList }) =>
 										? 'pause-circle-outline'
 										: 'play-circle-outline'
 								}
-								onPress={ () => pointInfo.isPassed && _playAudio(pointInfo.index) }
+								// onPress={ () => pointInfo.isPassed && _playAudio(pointInfo.index) }
+								onPress={ () => _playAudio(pointInfo.index) }
 							/>
-        		}
-        	</Point>
+						}
+					</Point>
         )
 			}
 		</View>

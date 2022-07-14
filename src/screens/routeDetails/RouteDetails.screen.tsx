@@ -1,11 +1,10 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { Image, ScrollView, View } from 'react-native'
+import { Image, ScrollView, View, Text } from 'react-native'
 import {
 	Button,
 	Spinner,
 	Tab,
 	TabBar,
-	Text,
 	useStyleSheet,
 	ViewPager
 } from '@ui-kitten/components'

@@ -23,6 +23,11 @@ target 'velovod' do
 
   pod 'react-native-splash-screen', :path => '../node_modules/react-native-splash-screen'
 
+  permissions_path = '../node_modules/react-native-permissions/ios'
+
+    pod 'Permission-LocationAccuracy', :path => "#{permissions_path}/LocationAccuracy"
+    pod 'Permission-LocationWhenInUse', :path => "#{permissions_path}/LocationWhenInUse"
+
   target 'velovodTests' do
     inherit! :complete
     # Pods for testing

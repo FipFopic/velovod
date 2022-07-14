@@ -26,9 +26,11 @@ const OwnerInfo: FC<OwnerInfoProps> = ({ title, photo, style, children }) => {
 					cache: FastImage.cacheControl.immutable
 				}}
 			/>
-			<Text style={styles.title}>
-				{ title }
-			</Text>
+			<View style={styles.title}>
+				<Text>
+					{ title }
+				</Text>
+			</View>
 
 			{
 				children &&
