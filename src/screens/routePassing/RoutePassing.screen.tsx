@@ -17,7 +17,16 @@ const RoutePassingScreen: FC = ({ route: routeNavigation, navigation }: any) => 
 	const id = routeNavigation?.params?.id as number
 	const type = routeNavigation?.params?.type as RouteType
 	const points = routeNavigation?.params?.points as IPoint[]
-	const soundList = routeNavigation?.params?.soundList as Sound[]
+	const soundSrcList = routeNavigation?.params?.srcAudioList as String[]
+	const soundList = soundSrcList.map((src) => {
+		if (!src) return src
+		return new Sound(
+			src,
+			undefined,
+			err => err &&
+				console.warn(`error in downloading audio: ${src}  file: `, err)
+		)
+	})
 
 	const onPressBack = () => {
 		Alert.alert(

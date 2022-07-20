@@ -23,12 +23,13 @@ export class AudioFile {
 	private src: string;
 	// private name;
 
-	constructor(url: string) {
+	constructor(routeId: string, url: string) {
 		this.url = url;
 		this.status = false;
 		this.src = '';
 		RNFetchBlob
 			.config({
+				session: routeId,
 				fileCache: true,
 				appendExt: 'mp3'
 			})
@@ -42,6 +43,10 @@ export class AudioFile {
 
 	isLoaded() {
 		return this.status;
+	}
+
+	getSrc() {
+		return this.src
 	}
 
 }

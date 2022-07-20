@@ -13,7 +13,7 @@ import NavigationService from '../../core/utils/Navigation.service'
 import { IPoint } from '../../core/interfaces/IRoute'
 import { getAudioSrc, getImageSrc, getMediaSrc } from '../../core/utils/Main.helper'
 import { useAppSelector } from '../../core/hooks/redux'
-import { isAuthUser } from '../../core/utils/Storage.service'
+import {getRouteFromStorage, isAuthUser, saveRouteToStorage} from '../../core/utils/Storage.service'
 import { routeAPI } from '../../services/route/RouteService'
 import PointsList from '../../components/PointsList/PointsList'
 import OwnerInfo from '../../components/OwnerInfo/OwnerInfo'
@@ -57,6 +57,8 @@ const RouteDetailsScreen = ({ route: navigation }: any) => {
 		const [mapEventService, setMapEventService] = useState<any>()
 		const [isAudioLoading, setAudioLoading] = useState(false)
 		const [loadProgress, setLoadProgress] = useState(0)
+		const [isRouteDownloaded, setIsRouteDownload] = useState(false)
+		const [routeFromStorage, setRouteFromStorage] = useState<any>()
 
 		const POINTS_COORDS = points.map((point) => {
 			return {
@@ -68,6 +70,11 @@ const RouteDetailsScreen = ({ route: navigation }: any) => {
 		useEffect(() => {
 			if (route?.points) {
 				setPoints(route.points)
+				getRouteFromStorage(id.toString()).then(res => {
+					setRouteFromStorage(res)
+					setIsRouteDownload(!!res)
+				})
+				console.log('\n\n\n\n\n\n\n\n\nid', id)
 			}
 		}, [route])
 
@@ -80,9 +87,16 @@ const RouteDetailsScreen = ({ route: navigation }: any) => {
 			})
 		}, [points])
 
-		const onPressStartRoute = () => {
+		const onPressDownloadRoute = () => {
 			isAuthUser().then(res => {
 				if (res) return downloadRoute()
+				return NavigationService.navigate('ProfileStack')
+			})
+		}
+
+		const onPressStartRoute = () => {
+			isAuthUser().then(res => {
+				if (res) return NavigationService.navigate('RoutePassing', { id, type, points, srcAudioList: routeFromStorage.audioList })
 				return NavigationService.navigate('ProfileStack')
 			})
 		}
@@ -92,7 +106,8 @@ const RouteDetailsScreen = ({ route: navigation }: any) => {
 
 			Sound.setCategory('Playback')
 
-			const soundList: Sound[] = []
+			// const soundList: Sound[] = []
+			const soundList: AudioFile[] = []
 
 			// eslint-disable-next-line array-callback-return
 			points.map((point, idx) => {
@@ -110,7 +125,7 @@ const RouteDetailsScreen = ({ route: navigation }: any) => {
 					// 	err => err &&
 					// 		console.warn(`error in downloading audio: ${point?.point?.media[1]?.id}  file: `, err)
 					// )
-					soundList[idx] = new AudioFile(audioSrc)
+					soundList[idx] = new AudioFile(id.toString(), audioSrc)
 				}
 
 				const interval = setInterval(() => {
@@ -125,7 +140,12 @@ const RouteDetailsScreen = ({ route: navigation }: any) => {
 						return
 					}
 
-					NavigationService.navigate('RoutePassing', { id, type, points, soundList })
+					const srcAudioList = soundList.map((sound) => {
+						return sound ? sound.getSrc() : 0
+					})
+					saveRouteToStorage(id.toString(), points, srcAudioList)
+
+					NavigationService.navigate('RoutePassing', { id, type, points, srcAudioList })
 
 					setAudioLoading(false)
 					clearInterval(interval)
@@ -168,7 +188,15 @@ const RouteDetailsScreen = ({ route: navigation }: any) => {
 									</View>
 								}
 								{
-									!isLoading && !isAudioLoading && !error && points.length > 0 &&
+									!isRouteDownloaded && !isLoading && !isAudioLoading && !error && points.length > 0 &&
+									<Button
+										style={styles.beginButton}
+										onPress={onPressDownloadRoute}
+									>Загрузить маршрут</Button>
+								}
+
+								{
+									isRouteDownloaded && !isLoading && !isAudioLoading && !error && points.length > 0 &&
 									<Button
 										style={styles.beginButton}
 										onPress={onPressStartRoute}
