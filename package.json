@@ -39,7 +39,8 @@
 		"react-native-svg": "^9.13.6",
 		"react-native-vkontakte-login": "^1.0.1",
 		"react-redux": "^7.2.6",
-		"redux-logger": "^3.0.6"
+		"redux-logger": "^3.0.6",
+		"rn-fetch-blob": "^0.12.0"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.12.9",

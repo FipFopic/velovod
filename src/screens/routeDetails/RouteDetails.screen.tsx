@@ -23,6 +23,7 @@ import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps'
 import MapViewDirections from 'react-native-maps-directions'
 import { KEYS } from '../../config'
 import Sound from 'react-native-sound'
+import {AudioFile, downloadAudio} from '../../core/utils/AudioStorage.service'
 
 const RouteDetailsScreen = ({ route: navigation }: any) => {
 	const styles = useStyleSheet(themedStyles)
@@ -103,12 +104,13 @@ const RouteDetailsScreen = ({ route: navigation }: any) => {
 				if (!point.point.media[0] || !point.point.media.some(media => media.media_format.includes('audio'))) {
 					soundList[idx] = 0
 				} else {
-					soundList[idx] = new Sound(
-						audioSrc,
-						undefined,
-						err => err &&
-							console.warn(`error in downloading audio: ${point?.point?.media[1]?.id}  file: `, err)
-					)
+					// soundList[idx] = new Sound(
+					// 	audioSrc,
+					// 	undefined,
+					// 	err => err &&
+					// 		console.warn(`error in downloading audio: ${point?.point?.media[1]?.id}  file: `, err)
+					// )
+					soundList[idx] = new AudioFile(audioSrc)
 				}
 
 				const interval = setInterval(() => {
@@ -117,8 +119,8 @@ const RouteDetailsScreen = ({ route: navigation }: any) => {
 					if (!isLoaded) {
 						const loadingList = soundList.filter((sound) => sound)
 						const loaded = loadingList.filter((sound) => sound.isLoaded())
-						console.log('loadingList', loadingList)
-						console.log('loaded', loaded)
+						// console.log('loadingList', loadingList)
+						// console.log('loaded', loaded)
 						setLoadProgress((loaded.length / loadingList.length * 100).toFixed(1))
 						return
 					}
