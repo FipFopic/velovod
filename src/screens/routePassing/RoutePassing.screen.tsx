@@ -9,6 +9,7 @@ import NavigationService from '../../core/utils/Navigation.service'
 import SimpleRoutePassing from './components/SimpleRoutePassing'
 import themedStyles from './RoutePassing.style'
 import Sound from 'react-native-sound'
+import {removeProgress} from "../../core/utils/Progress.service";
 // import SimpleRoutePassing from './components/SimpleRoutePassing'
 
 const RoutePassingScreen: FC = ({ route: routeNavigation, navigation }: any) => {
@@ -23,8 +24,8 @@ const RoutePassingScreen: FC = ({ route: routeNavigation, navigation }: any) => 
 		return new Sound(
 			src,
 			undefined,
-			err => err &&
-				console.warn(`error in downloading audio: ${src}  file: `, err)
+			// err => err &&
+				// console.warn(`error in downloading audio: ${src}  file: `, err)
 		)
 	})
 
@@ -36,7 +37,7 @@ const RoutePassingScreen: FC = ({ route: routeNavigation, navigation }: any) => 
 				{
 					text: 'Покинуть',
 					style: 'destructive',
-					onPress: navigation.goBack
+					onPress: handleBackButtonClick
 				},
 				{
 					text: 'Отмена'
@@ -46,10 +47,11 @@ const RoutePassingScreen: FC = ({ route: routeNavigation, navigation }: any) => 
 		return false
 	}
 
-	// function handleBackButtonClick() {
-	// 	navigation.goBack();
-	// 	return true;
-	// }
+	function handleBackButtonClick() {
+		removeProgress().then(() => {
+			navigation.goBack()
+		})
+	}
 
 	useEffect(() => {
 		navigation.setOptions({

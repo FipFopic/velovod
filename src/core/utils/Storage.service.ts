@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { IUser } from '../interfaces/IUser'
-import RNFetchBlob from "rn-fetch-blob";
+import RNFetchBlob from 'rn-fetch-blob'
 
 export const getFromStorage = (key: string): Promise<string | null> => {
 	return AsyncStorage.getItem(key)
@@ -59,7 +59,7 @@ export const removeRouteFromStorage = (routeId: string): Promise<void> => {
 export const removeAllRoutesFromStorage = async(): Promise<boolean> => {
 	const keys = await AsyncStorage.getAllKeys()
 	for (let key of keys) {
-		if (key !== 'user') {
+		if (key !== 'user' && key !== 'accessToken' && key !== 'refreshToken') {
 			await RNFetchBlob.session(key).dispose().catch((e) => {return e})
 			await removeRouteFromStorage(key)
 		}

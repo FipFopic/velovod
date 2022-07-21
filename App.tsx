@@ -5,7 +5,12 @@ import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { EvaIconsPack } from '@ui-kitten/eva-icons'
 import * as eva from '@eva-design/eva'
 import { setupStore } from './src/core/redux/store'
-import { getFromStorage } from './src/core/utils/Storage.service'
+import {
+	getFromStorage,
+	getRouteFromStorage,
+	removeAllRoutesFromStorage,
+	removeRouteFromStorage
+} from './src/core/utils/Storage.service'
 // import { setIsAuth } from './src/store/auth/AuthSlice'
 import Navigation from './src/navigation/Navigation'
 // eslint-disable-next-line import/no-named-default
@@ -15,15 +20,35 @@ import { KeyboardAvoidingView } from 'react-native'
 import 'react-native-gesture-handler'
 import SplashScreen from 'react-native-splash-screen'
 import { requestFineGeoPermission } from './src/core/utils/permissions.helper'
+import {getProgress, IProgressData} from "./src/core/utils/Progress.service";
+import NavigationService from "./src/core/utils/Navigation.service";
 
 const App: FC = () => {
 	const store = setupStore()
 	const [isPermissions, setPermissions] = useState(false)
+	const [progressData, setProgressData] = useState<IProgressData>()
 
 	//hide splash screen after load and getPermissions
 	useEffect(() => {
 		SplashScreen.hide()
 		requestFineGeoPermission().then((res) => setPermissions(res))
+		getProgress().then(progress => {
+				console.log('progress', progress)
+			if (progress) {
+				// setProgressData(JSON.parse(progress))
+				getRouteFromStorage(JSON.parse(progress).routeId).then( routeData => {
+					NavigationService.navigate('RoutePassing', {
+						id: routeData.routeId,
+						type: 'route',
+						points: routeData.pointList,
+						srcAudioList: routeData.audioList,
+						fromProgress: true
+					})
+				}
+				)
+				return
+			}
+		})
 	})
 
 	useEffect(() => {

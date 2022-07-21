@@ -19,6 +19,7 @@ import themedStyles from '../RoutePassing.style'
 import Sound from 'react-native-sound'
 import { routeAPI } from '../../../services/route/RouteService'
 import MyLocationButton from '../../../components/MyLocationButton/MyLocationButton'
+import {removeProgress, saveProgress} from "../../../core/utils/Progress.service";
 
 interface SimpleRoutePassingProps {
 	routeId: number
@@ -29,18 +30,28 @@ interface SimpleRoutePassingProps {
 
 const SimpleRoutePassing: FC<SimpleRoutePassingProps> = ({ routeId, points, navigation, soundList }) => {
 	const styles = useStyleSheet(themedStyles)
+	const fromProgress =  navigation?.params?.fromProgress as boolean
 
-	const POINTS_TO_PASS = useMemo(() => getPointsToPass(points), [])
+	const POINTS_TO_PASS = useMemo(() => {
+		if (!fromProgress) {
+			return getPointsToPass(points)
+		}
+		return points
+	}, [])
 	const POINTS_COORDS = useMemo(() => getPointsCoords(POINTS_TO_PASS), [])
 
 	const { data: user } = userAPI.useGetProfileQuery()
 	const [completeRoute, { data, error, isLoading }] = routeAPI.useCompleteRouteMutation()
 
+	POINTS_TO_PASS[0].isPassed = true
+	POINTS_TO_PASS[1].isPassed = true
 	const [currentLocation, setLocation] = useState<ICoords | null>(null)
 	const [pointList, setPointList] = useState<PointPass[]>(POINTS_TO_PASS)
-	const [nextPoint, setNextPoint] = useState<PointPass>(POINTS_TO_PASS[0])
+	const [nextPoint, setNextPoint] = useState<PointPass>(POINTS_TO_PASS.find((elem) => !elem.isPassed))
 	const [isEnd, setEnd] = useState(false)
 	const [mapEventService, setMapEventService] = useState<any>()
+
+	saveProgress({routeId: routeId.toString(), pointList})
 
 	const bottomSheetRef = useRef<BottomSheet>(null)
 	const snapPoints = useMemo(() => ['25%', '50%', '70%'], [])
@@ -72,7 +83,7 @@ const SimpleRoutePassing: FC<SimpleRoutePassingProps> = ({ routeId, points, navi
 				{
 					text: 'Покинуть',
 					style: 'destructive',
-					onPress: navigation.goBack
+					onPress: handleBackButtonClick
 				},
 				{
 					text: 'Отмена'
@@ -80,6 +91,12 @@ const SimpleRoutePassing: FC<SimpleRoutePassingProps> = ({ routeId, points, navi
 			]
 		)
 		return false
+	}
+
+	function handleBackButtonClick() {
+		removeProgress().then(() => {
+			navigation.goBack()
+		})
 	}
 
 	const onPressEnd = () => {
@@ -107,6 +124,7 @@ const SimpleRoutePassing: FC<SimpleRoutePassingProps> = ({ routeId, points, navi
 
 		pointPassed(nextPoint.index)
 		setNextPoint(pointList[nextPoint.index + 1])
+		saveProgress({routeId: routeId.toString(), pointList})
 	}, [currentLocation])
 
 	return (
