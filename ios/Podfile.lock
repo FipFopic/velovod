@@ -315,6 +315,8 @@ PODS:
     - React-Core
   - react-native-maps (0.30.1):
     - React-Core
+  - react-native-netinfo (9.3.0):
+    - React-Core
   - react-native-safe-area-context (3.3.2):
     - React-Core
   - react-native-splash-screen (3.3.0):
@@ -493,6 +495,7 @@ DEPENDENCIES:
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
   - react-native-google-maps (from `../node_modules/react-native-maps`)
   - react-native-maps (from `../node_modules/react-native-maps`)
+  - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - react-native-splash-screen (from `../node_modules/react-native-splash-screen`)
   - react-native-vkontakte-login (from `../node_modules/react-native-vkontakte-login`)
@@ -585,6 +588,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-maps"
   react-native-maps:
     :path: "../node_modules/react-native-maps"
+  react-native-netinfo:
+    :path: "../node_modules/@react-native-community/netinfo"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
   react-native-splash-screen:
@@ -674,6 +679,7 @@ SPEC CHECKSUMS:
   React-logger: 933f80c97c633ee8965d609876848148e3fef438
   react-native-google-maps: 17432eb7412df3c65d7c7c52ede085d0f5624f77
   react-native-maps: d752b0dd0e1951d815b1336332835aab6b4a836f
+  react-native-netinfo: 129bd99f607a2dc5bb096168f3e5c150fd1f1c95
   react-native-safe-area-context: 584dc04881deb49474363f3be89e4ca0e854c057
   react-native-splash-screen: 4312f786b13a81b5169ef346d76d33bc0c6dc457
   react-native-vkontakte-login: d5f2e9624b531f7aa3f8c178b2f273715a8b142e

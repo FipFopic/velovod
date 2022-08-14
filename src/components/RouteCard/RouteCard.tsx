@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, {FC, useEffect, useState} from 'react'
 import { Image, View, Text, TouchableOpacity } from 'react-native'
 import { useStyleSheet, Icon } from '@ui-kitten/components'
 import FastImage from 'react-native-fast-image'
@@ -10,6 +10,8 @@ interface RouteCardProps {
 	route: IRoute
 	type: RouteType
 	onPress: () => void
+	isSaved?: boolean
+	imageSrc?: string
 }
 
 const getDuration = (duration: string) => {
@@ -24,7 +26,7 @@ const getDistance = (distance: string) => {
 		+ 'км'
 }
 
-const RouteCard: FC<RouteCardProps> = ({ route, type, onPress }) => {
+const RouteCard: FC<RouteCardProps> = ({ route, type, onPress, isSaved = false, imageSrc }) => {
 	const styles = useStyleSheet(themedStyles)
 
 	const {
@@ -47,10 +49,15 @@ const RouteCard: FC<RouteCardProps> = ({ route, type, onPress }) => {
 				<FastImage
 					// @ts-ignore
 					style={styles.cardImage}
-					source={{
-						uri: getImageSrc(cover?.id, 720),
-						cache: FastImage.cacheControl.immutable
-					}}
+					source={isSaved
+						? {
+						uri: imageSrc
+						}
+						: {
+								uri: getImageSrc(cover?.id, 720),
+								cache: FastImage.cacheControl.immutable
+							}
+					}
 				/>
 			</View>
 

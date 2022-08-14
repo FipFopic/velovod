@@ -23,12 +23,14 @@ import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps'
 import MapViewDirections from 'react-native-maps-directions'
 import { KEYS } from '../../config'
 import Sound from 'react-native-sound'
-import {AudioFile, downloadAudio} from '../../core/utils/AudioStorage.service'
+import {AudioFile} from '../../core/utils/AudioStorage.service'
+import {ImageFile} from "../../core/utils/ImageStorage.service";
 
 const RouteDetailsScreen = ({ route: navigation }: any) => {
 	const styles = useStyleSheet(themedStyles)
 	const id = +navigation.params?.id || null
 	const type = navigation.params?.type || null
+	const isSaved = navigation.params?.isSaved || null
 
 	if (!id || !type) {
 		return (
@@ -49,7 +51,7 @@ const RouteDetailsScreen = ({ route: navigation }: any) => {
 	}, [])
 
 	if (type === 'route') {
-		const { data: route, isLoading, error } = routeAPI.useGetRouteQuery(id)
+		const { data: routeData, isLoading, error } = routeAPI.useGetRouteQuery(id)
 
 		const [points, setPoints] = useState<IPoint[]>([])
 		const [tabIndex, setTabIndex] = useState(0)
@@ -59,6 +61,12 @@ const RouteDetailsScreen = ({ route: navigation }: any) => {
 		const [loadProgress, setLoadProgress] = useState(0)
 		const [isRouteDownloaded, setIsRouteDownload] = useState(false)
 		const [routeFromStorage, setRouteFromStorage] = useState<any>()
+		const [savedImageSrc, setSavedImageSrc] = useState('')
+		const [route, setRoute] = useState('')
+
+		// useEffect(() => {
+		// 	const { data: route, isLoading, error } = (isSaved && isRouteDownloaded) ? { data: routeFromStorage?.routeData, error: false, isLoading: false } : routeAPI.useGetRouteQuery(id)
+		// }, [])
 
 		const POINTS_COORDS = points.map((point) => {
 			return {
@@ -68,13 +76,25 @@ const RouteDetailsScreen = ({ route: navigation }: any) => {
 		})
 
 		useEffect(() => {
+			getRouteFromStorage(id.toString()).then(res => {
+				setRouteFromStorage(res)
+				setIsRouteDownload(!!res)
+				console.log('getRouteFromStorage(id.toString()) res', res)
+			})
+		}, [])
+
+		useEffect(() => {
+			if (isRouteDownloaded) {
+				if (routeFromStorage) setRoute(routeFromStorage.routeData)
+				console.log('setRoute(routeFromStorage.routeData)', routeFromStorage.routeData)
+			} else {
+				setRoute(routeData)
+			}
+		}, [routeData, routeFromStorage, isRouteDownloaded])
+
+		useEffect(() => {
 			if (route?.points) {
 				setPoints(route.points)
-				getRouteFromStorage(id.toString()).then(res => {
-					setRouteFromStorage(res)
-					setIsRouteDownload(!!res)
-				})
-				console.log('\n\n\n\n\n\n\n\n\nid', id)
 			}
 		}, [route])
 
@@ -109,6 +129,8 @@ const RouteDetailsScreen = ({ route: navigation }: any) => {
 			// const soundList: Sound[] = []
 			const soundList: AudioFile[] = []
 
+			const image = new ImageFile(id.toString(), getImageSrc(route?.cover?.id, 1080))
+
 			// eslint-disable-next-line array-callback-return
 			points.map((point, idx) => {
 				const audioSrc = getMediaSrc(point.point.media, 'audio')
@@ -119,12 +141,6 @@ const RouteDetailsScreen = ({ route: navigation }: any) => {
 				if (!point.point.media[0] || !point.point.media.some(media => media.media_format.includes('audio'))) {
 					soundList[idx] = 0
 				} else {
-					// soundList[idx] = new Sound(
-					// 	audioSrc,
-					// 	undefined,
-					// 	err => err &&
-					// 		console.warn(`error in downloading audio: ${point?.point?.media[1]?.id}  file: `, err)
-					// )
 					soundList[idx] = new AudioFile(id.toString(), audioSrc)
 				}
 
@@ -134,16 +150,16 @@ const RouteDetailsScreen = ({ route: navigation }: any) => {
 					if (!isLoaded) {
 						const loadingList = soundList.filter((sound) => sound)
 						const loaded = loadingList.filter((sound) => sound.isLoaded())
-						// console.log('loadingList', loadingList)
-						// console.log('loaded', loaded)
 						setLoadProgress((loaded.length / loadingList.length * 100).toFixed(1))
 						return
 					}
 
+					if (!image.isLoaded()) return
+
 					const srcAudioList = soundList.map((sound) => {
 						return sound ? sound.getSrc() : 0
 					})
-					saveRouteToStorage(id.toString(), points, srcAudioList)
+					saveRouteToStorage(id.toString(), image.getSrc(), route, points, srcAudioList)
 
 					NavigationService.navigate('RoutePassing', { id, type, points, srcAudioList })
 
@@ -169,26 +185,26 @@ const RouteDetailsScreen = ({ route: navigation }: any) => {
 									}}
 								/>
 								{
-									error &&
+									error && !isRouteDownloaded &&
 									<View>
-										<Text>Произошла ошибка...</Text>
+										<Text>Ошибка подключения...</Text>
 									</View>
 								}
 								{
-									isLoading &&
+									isLoading && !isRouteDownloaded &&
 									<View style={styles.beginSpinner}>
 										<Spinner />
 									</View>
 								}
 								{
-									isAudioLoading &&
+									isAudioLoading && !isRouteDownloaded &&
 									<View style={styles.beginSpinner}>
 										<Spinner />
 										<Text>Загрузка аудио {loadProgress}%</Text>
 									</View>
 								}
 								{
-									!isRouteDownloaded && !isLoading && !isAudioLoading && !error && points.length > 0 &&
+									!isRouteDownloaded && !isLoading  && !isAudioLoading && !error && points.length > 0 &&
 									<Button
 										style={styles.beginButton}
 										onPress={onPressDownloadRoute}
@@ -196,7 +212,7 @@ const RouteDetailsScreen = ({ route: navigation }: any) => {
 								}
 
 								{
-									isRouteDownloaded && !isLoading && !isAudioLoading && !error && points.length > 0 &&
+									isRouteDownloaded && (isRouteDownloaded || !isLoading)&& !isAudioLoading && (isRouteDownloaded || error)  && points.length > 0 &&
 									<Button
 										style={styles.beginButton}
 										onPress={onPressStartRoute}

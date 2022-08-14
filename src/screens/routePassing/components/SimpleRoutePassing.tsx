@@ -43,8 +43,6 @@ const SimpleRoutePassing: FC<SimpleRoutePassingProps> = ({ routeId, points, navi
 	const { data: user } = userAPI.useGetProfileQuery()
 	const [completeRoute, { data, error, isLoading }] = routeAPI.useCompleteRouteMutation()
 
-	POINTS_TO_PASS[0].isPassed = true
-	POINTS_TO_PASS[1].isPassed = true
 	const [currentLocation, setLocation] = useState<ICoords | null>(null)
 	const [pointList, setPointList] = useState<PointPass[]>(POINTS_TO_PASS)
 	const [nextPoint, setNextPoint] = useState<PointPass>(POINTS_TO_PASS.find((elem) => !elem.isPassed))

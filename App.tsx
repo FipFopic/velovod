@@ -22,11 +22,13 @@ import SplashScreen from 'react-native-splash-screen'
 import { requestFineGeoPermission } from './src/core/utils/permissions.helper'
 import {getProgress, IProgressData} from "./src/core/utils/Progress.service";
 import NavigationService from "./src/core/utils/Navigation.service";
+import {useNetInfo} from "@react-native-community/netinfo";
 
 const App: FC = () => {
 	const store = setupStore()
 	const [isPermissions, setPermissions] = useState(false)
 	const [progressData, setProgressData] = useState<IProgressData>()
+	const internetConnection = useNetInfo()
 
 	//hide splash screen after load and getPermissions
 	useEffect(() => {
@@ -49,6 +51,7 @@ const App: FC = () => {
 				return
 			}
 		})
+		console.log('internetConnection', internetConnection)
 	})
 
 	useEffect(() => {

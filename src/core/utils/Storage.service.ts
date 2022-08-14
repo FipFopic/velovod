@@ -2,6 +2,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { IUser } from '../interfaces/IUser'
 import RNFetchBlob from 'rn-fetch-blob'
 
+const savedRouteListStorage = 'savedRouteListStorage'
+
 export const getFromStorage = (key: string): Promise<string | null> => {
 	return AsyncStorage.getItem(key)
 }
@@ -40,8 +42,19 @@ export const removeUserFromStorage = (): Promise<void> => {
 	return removeFromStorage('user')
 }
 
-export const saveRouteToStorage = (routeId: string, pointList: any, audioList: any): Promise<void> => {
-	return AsyncStorage.setItem(routeId, JSON.stringify({routeId, pointList, audioList}))
+export const saveRouteToStorage = (routeId: string, imageSrc: string, routeData: any, pointList: any, audioList: any): Promise<void> => {
+	return AsyncStorage.setItem(routeId, JSON.stringify({routeId, imageSrc, routeData, pointList, audioList})).then(() => {
+		getFromStorage(savedRouteListStorage).then(res => {
+			if (res) {
+				const temp = [...new Set([...JSON.parse(res), routeId])]
+				AsyncStorage.setItem(savedRouteListStorage, JSON.stringify(temp))
+				console.log('res true', res)
+			} else {
+				AsyncStorage.setItem(savedRouteListStorage, JSON.stringify([routeId]))
+				console.log('res false', res)
+			}
+		})
+	})
 }
 
 export const getRouteFromStorage = async (routeId: string): Promise<object | null> => {
@@ -53,6 +66,9 @@ export const getRouteFromStorage = async (routeId: string): Promise<object | nul
 }
 
 export const removeRouteFromStorage = (routeId: string): Promise<void> => {
+	AsyncStorage.getItem(savedRouteListStorage).then(res => {
+		AsyncStorage.mergeItem(savedRouteListStorage, JSON.stringify((JSON.parse(res)).filter(id => id !== routeId)))
+	})
 	return removeFromStorage(routeId)
 }
 
@@ -64,7 +80,16 @@ export const removeAllRoutesFromStorage = async(): Promise<boolean> => {
 			await removeRouteFromStorage(key)
 		}
 	}
+	await AsyncStorage.removeItem(savedRouteListStorage)
 	return true
+}
+
+export const getSavedRouteListStorage = async (): Promise<object | null> => {
+	const json = await getFromStorage(savedRouteListStorage)
+	if (!json) {
+		return null
+	}
+	return JSON.parse(json)
 }
 
 
