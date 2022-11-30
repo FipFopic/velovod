@@ -54,6 +54,28 @@ const SimpleRoutePassing: FC<SimpleRoutePassingProps> = ({ routeId, points, navi
 	const bottomSheetRef = useRef<BottomSheet>(null)
 	const snapPoints = useMemo(() => ['25%', '50%', '70%'], [])
 
+	const [isAudioPlaying, setAudioPlaying] = useState(false)
+	const [actualAudioIndex, setActualAudioIndex] = useState(-1)
+
+	const _playAudio = (index: number) => {
+		if (isAudioPlaying && actualAudioIndex !== index) {
+			soundList[actualAudioIndex].pause()
+		}
+
+		if (!soundList[index].isPlaying()) {
+			soundList[index].play(() => {
+				setAudioPlaying(false)
+			})
+			setAudioPlaying(true)
+			setActualAudioIndex(index)
+			return
+		}
+
+		soundList[index].pause()
+		setAudioPlaying(false)
+		setActualAudioIndex(-1)
+	}
+
 	useEffect(() => {
 		if (data && !error && !isLoading) navigation.goBack()
 	}, [data])
@@ -70,7 +92,9 @@ const SimpleRoutePassing: FC<SimpleRoutePassingProps> = ({ routeId, points, navi
 	}
 
 	const pointPassed = (idx: number) => {
-		pointList[idx] = { ...pointList[idx], isPassed: true }
+		const tempList = pointList
+		tempList[idx] = { ...pointList[idx], isPassed: true }
+		setPointList(tempList)
 	}
 
 	const onPressBack = () => {
@@ -121,9 +145,31 @@ const SimpleRoutePassing: FC<SimpleRoutePassingProps> = ({ routeId, points, navi
 		}
 
 		pointPassed(nextPoint.index)
+		_playAudio(nextPoint.index)
 		setNextPoint(pointList[nextPoint.index + 1])
 		saveProgress({routeId: routeId.toString(), pointList})
 	}, [currentLocation])
+
+	useEffect(() => {
+		// console.log('nextPoint.data.point.latitude', nextPoint.data.point.latitude)
+		// console.log('nextPoint.data.point.long', nextPoint.data.point.longitude)
+		// setTimeout( () => {
+		// 	setLocation({
+		// 		latitude: 55.738983,
+		// 		longitude: 37.611004
+		// 	})
+		// }, 5000)
+	})
+
+	useEffect(() => {
+		console.log('isAudioPlaying', isAudioPlaying)
+		console.log('soundList', soundList)
+		console.log('soundList[]', soundList[nextPoint-1])
+		soundList[0].play()
+		setTimeout(() => {
+			console.log('soundList[0].isPlaying()', soundList[0].isPlaying())
+		}, 5000)
+	}, [isAudioPlaying])
 
 	return (
 		<>
@@ -199,6 +245,8 @@ const SimpleRoutePassing: FC<SimpleRoutePassingProps> = ({ routeId, points, navi
 						<PointsPassingList
 							points={pointList}
 							soundList={soundList}
+							actualAudioIndex={actualAudioIndex}
+							playAudio={_playAudio}
 						/>
 					</ScrollView>
 				</BottomSheet>

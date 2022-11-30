@@ -10,32 +10,12 @@ import Sound from 'react-native-sound'
 interface PointsPassingListProps {
   points: PointPass[]
   soundList: Sound[]
+	actualAudioIndex: number
+	playAudio: (index: number) => void
 }
 
-const PointsPassingList: FC<PointsPassingListProps> = ({ points, soundList }) => {
+const PointsPassingList: FC<PointsPassingListProps> = ({ points, soundList, actualAudioIndex, playAudio }) => {
 	const styles = useStyleSheet(themedStyles)
-
-	const [isAudioPlaying, setAudioPlaying] = useState(false)
-	const [actualAudioIndex, setActualAudioIndex] = useState(-1)
-
-	const _playAudio = (index: number) => {
-		if (isAudioPlaying && actualAudioIndex !== index) {
-			soundList[actualAudioIndex].pause()
-		}
-
-		if (!soundList[index].isPlaying()) {
-			soundList[index].play(() => {
-				setAudioPlaying(false)
-			})
-			setAudioPlaying(true)
-			setActualAudioIndex(index)
-			return
-		}
-
-		soundList[index].pause()
-		setAudioPlaying(false)
-		setActualAudioIndex(-1)
-	}
 
 	return (
 		<View style={{ paddingBottom: 50 }}>
@@ -61,8 +41,8 @@ const PointsPassingList: FC<PointsPassingListProps> = ({ points, soundList }) =>
 										? 'pause-circle-outline'
 										: 'play-circle-outline'
 								}
-								// onPress={ () => pointInfo.isPassed && _playAudio(pointInfo.index) }
-								onPress={ () => _playAudio(pointInfo.index) }
+								onPress={ () => pointInfo.isPassed && playAudio(pointInfo.index) }
+								// onPress={ () => _playAudio(pointInfo.index) }
 							/>
 						}
 					</Point>
