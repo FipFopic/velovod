@@ -151,17 +151,6 @@ const SimpleRoutePassing: FC<SimpleRoutePassingProps> = ({ routeId, points, navi
 	}, [currentLocation])
 
 	useEffect(() => {
-		// console.log('nextPoint.data.point.latitude', nextPoint.data.point.latitude)
-		// console.log('nextPoint.data.point.long', nextPoint.data.point.longitude)
-		// setTimeout( () => {
-		// 	setLocation({
-		// 		latitude: 55.738983,
-		// 		longitude: 37.611004
-		// 	})
-		// }, 5000)
-	})
-
-	useEffect(() => {
 		console.log('isAudioPlaying', isAudioPlaying)
 		console.log('soundList', soundList)
 		console.log('soundList[]', soundList[nextPoint-1])
