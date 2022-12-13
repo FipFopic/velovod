@@ -1,27 +1,27 @@
 import React, { useEffect, useState } from 'react'
-import { NativeScrollEvent, NativeSyntheticEvent, ScrollView, View } from 'react-native'
+import {NativeScrollEvent, NativeSyntheticEvent, ScrollView, useWindowDimensions, View} from 'react-native'
 import {
 	Button,
 	Spinner,
 	Tab,
-	TabBar,
 	Text,
 	useStyleSheet,
 	ViewPager
 } from '@ui-kitten/components'
 import NavigationService from '../../core/utils/Navigation.service'
-import {IRoute, RoutesListType, RouteType} from '../../core/interfaces/IRoute'
+import { IRoute, RoutesListType, RouteType } from '../../core/interfaces/IRoute'
 import { routeAPI } from '../../services/route/RouteService'
 import RouteCard from '../../components/RouteCard/RouteCard'
 import { isEndOfScroll, RoutesListTypeTab, RouteTab } from './Routes.helper'
 import themedStyles from './Routes.style'
-import MapView, {PROVIDER_GOOGLE} from 'react-native-maps'
-import {getImageSrc} from "../../core/utils/Main.helper";
+import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'
+import {getImageSrc} from "../../core/utils/Main.helper"
 import {
 	getRouteFromStorage,
 	getSavedRouteListStorage,
 	removeAllRoutesFromStorage
-} from "../../core/utils/Storage.service";
+} from '../../core/utils/Storage.service'
+import { TabView, SceneMap, TabBar } from 'react-native-tab-view'
 
 const tabs: RouteTab[] = [
 	{
@@ -57,8 +57,23 @@ const routesListType: RoutesListTypeTab[] = [
 const RoutesScreen = () => {
 	const styles = useStyleSheet(themedStyles)
 
+	const layout = useWindowDimensions()
+
+	const [mainTabIndex, setMainTabIndex] = React.useState(0)
+	const [mainTabRoutes] = React.useState([
+		{ key: 'first', title: 'Маршруты', type: 'route' },
+		{ key: 'second', title: 'Скачанные', type: 'savedRoutes' }
+	])
+
+	const [routesTabIndex, setRoutesTabIndex] = React.useState(0)
+	const [routesTabRoutes] = React.useState([
+		{ key: 'first', title: 'Рядом', type: 'near' },
+		{ key: 'second', title: 'Все', type: 'default' }
+	])
+
 	const [activeTab, setActiveTab] = useState<RouteTab>(tabs[0])
-	const [routesListTypeTab, setRoutesListTypeTab] = useState<RoutesListTypeTab>(routesListType[0])
+	// const [routesListTypeTab, setRoutesListTypeTab] = useState<RoutesListTypeTab>(routesListType[0])
+	const [routesListTypeTab, setRoutesListTypeTab] = useState(routesTabRoutes[0])
 	const [currentLocation, setCurrentLocation] = useState<any>({})
 	const [routeList, setRouteList] = useState<IRoute[]>([])
 	const [nearRouteList, setNearRouteList] = useState<IRoute[]>([])
@@ -72,6 +87,7 @@ const RoutesScreen = () => {
 	const [isLoadingRoutes, setLoadingRoutes] = useState(false)
 	const [savedRoutes, setSavedRoutes] = useState([])
 	// const [isLoadingQuests, setLoadingQuests] = useState(false)
+
 
 	const {
 		data: routesChunk,
@@ -94,6 +110,10 @@ const RoutesScreen = () => {
 	useEffect(() => {
 		getSavedRoutes()
 	}, [])
+
+	useEffect(() => {
+		setRoutesListTypeTab(routesTabRoutes[routesTabIndex])
+	}, [routesTabIndex])
 
 	useEffect(() => {
 		console.log('errorRoutes', errorRoutes)
@@ -221,139 +241,186 @@ const RoutesScreen = () => {
 		setTimeout(()=>setSavedRoutes(tempList),500)
 	}
 
+	const nearRoutes = () => (
+		nearRouteList &&
+		nearRouteList.map((route, idx) =>
+			<RouteCard
+				key={`${route.id}-${idx}`}
+				route={route}
+				type='route'
+				onPress={() => onPressRouteCard(route, 'route')}
+			/>)
+	)
+
+	const regularRoutes = () => (
+		routeList &&
+		routeList.map((route, idx) =>
+			<RouteCard
+				key={`${route.id}-${idx}`}
+				route={route}
+				type='route'
+				onPress={() => onPressRouteCard(route, 'route')}
+			/>
+		)
+	)
+
+	const renderRoutesScene = SceneMap({
+		first: nearRoutes,
+		second: regularRoutes
+	})
+
+	const Routes = () => (
+		// <ScrollView
+		// 	contentContainerStyle={styles.roadRoutesBox}
+		// 	showsVerticalScrollIndicator={false}
+		// 	scrollEventThrottle={1000}
+		// 	onScroll={scrollHandler}
+		// >
+			<TabView
+				navigationState={{ index: routesTabIndex, routes: routesTabRoutes }}
+				onIndexChange={setRoutesTabIndex}
+				renderScene={renderRoutesScene}
+				renderTabBar={_renderTabBar}
+				initialLayout={{ width: layout.width }}
+			/>
+			// {/*<TabBar*/}
+			// {/*	selectedIndex={routesListTypeTab.id}*/}
+			// {/*	onSelect={idx => setRoutesListTypeTab(routesListType[idx])}*/}
+			// {/*	style={{*/}
+			// {/*		width: '50%',*/}
+			// {/*		// backgroundColor: '#ecf0f1',*/}
+			// {/*		display: activeTab.id ? 'none' : 'flex'*/}
+			// {/*	}}*/}
+			// {/*	indicatorStyle={{*/}
+			// {/*		display: 'none'*/}
+			// {/*	}}*/}
+			// {/*>*/}
+			// {/*	{*/}
+			// {/*		routesListType &&*/}
+			// {/*		routesListType.map(tab =>*/}
+			// {/*			<Tab key={tab.id} title={tab.title}/>*/}
+			// {/*		)*/}
+			// {/*	}*/}
+			// {/*</TabBar>*/}
+		// 	{
+		// 		errorRoutes &&
+		// 		<View>
+		// 			<Text>{errorRoutes.error.toString()}</Text>
+		// 			<Button style={{marginTop: 10}} onPress={() => setActiveTab(tabs[1])}>К сохраненным</Button>
+		// 		</View>
+		// 	}
+		// 	{
+		// 		isLoadingRoutes &&
+		// 		<View style={styles.bottomSpinner}>
+		// 			<Spinner />
+		// 		</View>
+		// 	}
+		// </ScrollView>
+	)
+
+	const SavedRoutes = () => (
+		<ScrollView
+			contentContainerStyle={styles.roadRoutesBox}
+			showsVerticalScrollIndicator={false}
+			onScroll={scrollHandler}
+		>
+			<Button style={{marginTop: 10}} onPress={_handleRemoveAllRoutes}>Удалить все маршруты</Button>
+			{
+				savedRoutes &&
+				savedRoutes.map((savedRoute, idx) => {
+						console.log('idx', savedRoute.routeId)
+						return <RouteCard
+							key={`${savedRoute.routeId}-${idx}`}
+							route={savedRoute.routeData}
+							type='route'
+							onPress={() => onPressRouteCard(savedRoute.routeData, 'route')}
+							isSaved={true}
+							imageSrc={savedRoute.imageSrc}
+						/>
+					}
+				)
+			}
+			{/*{*/}
+			{/*	questList &&*/}
+			{/*	questList.map((quest, idx) =>*/}
+			{/*		<RouteCard*/}
+			{/*			key={`${quest.id}-${idx}`}*/}
+			{/*			route={quest}*/}
+			{/*			type='quest'*/}
+			{/*			onPress={() => onPressRouteCard(quest, 'quest')}*/}
+			{/*		/>*/}
+			{/*	)*/}
+			{/*}*/}
+			{/*{*/}
+			{/*	errorQuests &&*/}
+			{/*	<View>*/}
+			{/*		<Text>{errorQuests.toString()}</Text>*/}
+			{/*	</View>*/}
+			{/*}*/}
+			{/*{*/}
+			{/*	isLoadingQuests &&*/}
+			{/*	<View>*/}
+			{/*		<Spinner />*/}
+			{/*	</View>*/}
+			{/*}*/}
+		</ScrollView>
+	)
+
+	const renderMainScene = SceneMap({
+		first: Routes,
+		second: SavedRoutes
+	})
+
+	const _renderTabBar = props => (
+		<TabBar
+			{...props}
+			indicatorStyle={{ backgroundColor: 'red' }}
+			style={{ backgroundColor: 'green' }}
+			renderLabel={({ route, focused }) => {
+				const color = focused ? 'black' : 'grey'
+				return (
+					<View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+						{/*{route.key === 'rewards' ? <StarRound color={color} /> : <StarVip color={color} />}*/}
+						{/*<Text style={[styles.tabLabelTitle, { color: color }]}>Title</Text>*/}
+						<Text style={{ color: color }}>{route.title}</Text>
+					</View>
+				)
+			}}
+		/>
+	)
+
 	return (
 		<>
 			<View style={styles.pageBox}>
 				<View style={styles.contentBox}>
-					<View>
+					<TabView
+						navigationState={{ index: mainTabIndex, routes: mainTabRoutes }}
+						renderScene={renderMainScene}
+						renderTabBar={_renderTabBar}
+						onIndexChange={setMainTabIndex}
+						initialLayout={{ width: layout.width }}
+					/>
+					{/*<View>*/}
 
-						<TabBar
-							selectedIndex={activeTab.id}
-							onSelect={idx => _handleTabBar(idx)}
-						>
-							{
-								tabs &&
-								tabs.map(tab =>
-									<Tab key={tab.id} title={tab.title} />
-								)
-							}
-						</TabBar>
+					{/*	<TabBar*/}
+					{/*		selectedIndex={activeTab.id}*/}
+					{/*		onSelect={idx => _handleTabBar(idx)}*/}
+					{/*	>*/}
+					{/*		{*/}
+					{/*			tabs &&*/}
+					{/*			tabs.map(tab =>*/}
+					{/*				<Tab key={tab.id} title={tab.title} />*/}
+					{/*			)*/}
+					{/*		}*/}
+					{/*	</TabBar>*/}
 
-						<ViewPager
-							selectedIndex={activeTab.id}
-							onSelect={ idx => setActiveTab(tabs[idx])}
-						>
-
-							<ScrollView
-								contentContainerStyle={styles.roadRoutesBox}
-								showsVerticalScrollIndicator={false}
-								scrollEventThrottle={1000}
-								onScroll={scrollHandler}
-							>
-								<TabBar
-									selectedIndex={routesListTypeTab.id}
-									onSelect={idx => setRoutesListTypeTab(routesListType[idx])}
-									style={{
-										width: '50%',
-										// backgroundColor: '#ecf0f1',
-										display: activeTab.id ? 'none' : 'flex'
-									}}
-									indicatorStyle={{
-										display: 'none'
-									}}
-								>
-									{
-										routesListType &&
-										routesListType.map(tab =>
-											<Tab key={tab.id} title={tab.title}/>
-										)
-									}
-								</TabBar>
-								{
-									nearRouteList && routesListTypeTab.type === 'near' &&
-									nearRouteList.map((route, idx) =>
-												<RouteCard
-													key={`${route.id}-${idx}`}
-													route={route}
-													type='route'
-													onPress={() => onPressRouteCard(route, 'route')}
-												/>)
-								}
-								{
-									routeList && routesListTypeTab.type === 'default' &&
-									routeList.map((route, idx) =>
-										<RouteCard
-											key={`${route.id}-${idx}`}
-											route={route}
-											type='route'
-											onPress={() => onPressRouteCard(route, 'route')}
-										/>
-									)
-								}
-								{
-									errorRoutes &&
-									<View>
-										<Text>{errorRoutes.error.toString()}</Text>
-										<Button style={{marginTop: 10}} onPress={() => setActiveTab(tabs[1])}>К сохраненным</Button>
-									</View>
-								}
-								{
-									isLoadingRoutes &&
-									<View style={styles.bottomSpinner}>
-										<Spinner />
-									</View>
-								}
-							</ScrollView>
-
-							<ScrollView
-								contentContainerStyle={styles.roadRoutesBox}
-								showsVerticalScrollIndicator={false}
-								onScroll={scrollHandler}
-							>
-								<Button style={{marginTop: 10}} onPress={_handleRemoveAllRoutes}>Удалить все маршруты</Button>
-								{
-									savedRoutes &&
-									savedRoutes.map((savedRoute, idx) => {
-											console.log('idx', savedRoute.routeId)
-											return <RouteCard
-												key={`${savedRoute.routeId}-${idx}`}
-												route={savedRoute.routeData}
-												type='route'
-												onPress={() => onPressRouteCard(savedRoute.routeData, 'route')}
-												isSaved={true}
-												imageSrc={savedRoute.imageSrc}
-									/>
-									}
-									)
-								}
-								{/*{*/}
-								{/*	questList &&*/}
-								{/*	questList.map((quest, idx) =>*/}
-								{/*		<RouteCard*/}
-								{/*			key={`${quest.id}-${idx}`}*/}
-								{/*			route={quest}*/}
-								{/*			type='quest'*/}
-								{/*			onPress={() => onPressRouteCard(quest, 'quest')}*/}
-								{/*		/>*/}
-								{/*	)*/}
-								{/*}*/}
-								{/*{*/}
-								{/*	errorQuests &&*/}
-								{/*	<View>*/}
-								{/*		<Text>{errorQuests.toString()}</Text>*/}
-								{/*	</View>*/}
-								{/*}*/}
-								{/*{*/}
-								{/*	isLoadingQuests &&*/}
-								{/*	<View>*/}
-								{/*		<Spinner />*/}
-								{/*	</View>*/}
-								{/*}*/}
-							</ScrollView>
-
-
-						</ViewPager>
-					</View>
+					{/*	<ViewPager*/}
+					{/*		selectedIndex={activeTab.id}*/}
+					{/*		onSelect={ idx => setActiveTab(tabs[idx])}*/}
+					{/*	>*/}
+					{/*		*/}
+					{/*	</ViewPager>*/}
+					{/*</View>*/}
 					<MapView
 						provider={PROVIDER_GOOGLE}
 						showsUserLocation={true}
